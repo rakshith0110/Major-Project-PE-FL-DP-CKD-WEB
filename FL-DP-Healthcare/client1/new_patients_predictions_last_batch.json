@@ -1,0 +1,25 @@
+{
+  "appended_rows": 1,
+  "preview": [
+    {
+      "age": 69,
+      "bp": 163,
+      "sg": 1.024,
+      "al": 0,
+      "su": 0,
+      "bgr": 105,
+      "bu": 37,
+      "sc": 3.07,
+      "sod": 134,
+      "pot": 3.73,
+      "hemo": 8.5,
+      "pcv": 44,
+      "wc": 8197,
+      "rc": 3.86,
+      "class": 1,
+      "predicted_prob": 0.999997615814209,
+      "predicted_label": "YES",
+      "predicted_date_time": "2026-01-25 15:20:24"
+    }
+  ]
+}

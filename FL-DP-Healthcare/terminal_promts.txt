@@ -1,0 +1,25 @@
+1)Initial Global (centralized training once)
+
+python init_global.py --template_csv data/chronic_kidney_disease_5000.csv --epochs 30 --batch 64 --lr 1e-3
+
+------------------------------------------------------
+2)Client Training with DP (run once per client)
+
+Client 1 :
+python client_train_once.py --client_name Client1 --client_dir client1 --client_csv client1/dataset/client1_ckd.csv --premodel_ckpt client1/premodel_client1.pt --template_csv data/chronic_kidney_disease_5000.csv
+
+Client 2 :
+python client_train_once.py --client_name Client2 --client_dir client2 --client_csv client2/dataset/client2_ckd.csv --premodel_ckpt client2/premodel_client2.pt --template_csv data/chronic_kidney_disease_5000.csv
+
+Client 3 :
+python client_train_once.py --client_name Client3 --client_dir client3 --client_csv client3/dataset/client3_ckd.csv --premodel_ckpt client3/premodel_client3.pt --template_csv data/chronic_kidney_disease_5000.csv
+
+-----------------------------------
+3)Aggregation (update global and distribute to clients)
+
+python aggregate_once.py --delta1 client1/delta_final.pt --delta2 client2/delta_final.pt --delta3 client3/delta_final.pt --template_csv data/chronic_kidney_disease_5000.csv
+
+-----------------------------------------
+4)Prediction from shared patient data (append to each client’s records)
+
+python predict_from_patient_data.py --client_name Client2 --client_dir client2 --template_csv data/chronic_kidney_disease_5000.csv --patient_csv data/patient_data.csv
