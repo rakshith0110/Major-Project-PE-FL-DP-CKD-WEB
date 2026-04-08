@@ -51,9 +51,9 @@ CSE, NMAM Institute Of Technology,Nitte
 
 ---
 
-## ✅ Step 1 — Install Python
+## ✅ Step 1 — Install Python 3.11
 
-Download Python from:
+Download Python 3.11 from:
 
 https://www.python.org/downloads/
 
@@ -64,9 +64,11 @@ During installation:
 Verify installation:
 
 ```bash
-python --version
-pip --version
+python3.11 --version
+pip3.11 --version
 ```
+
+**Note:** This project requires Python 3.11 specifically.
 
 ---
 
@@ -92,7 +94,7 @@ FL-DP-Healthcare (open this folder in VS code)
 Inside project folder:
 
 ```bash
-python -m venv venv
+python3.11 -m venv venv
 ```
 
 ---
@@ -132,7 +134,7 @@ Wait until installation completes.
 ## ✅ Step 6 — Verify Installation
 
 ```bash
-python -c "import torch, numpy, pandas, sklearn, matplotlib; print('Environment ready')"
+python3.11 -c "import torch, numpy, pandas, sklearn, matplotlib; print('Environment ready')"
 ```
 
 If no error → setup successful ✅
@@ -146,7 +148,7 @@ If no error → setup successful ✅
 ### ▶️ Step 7.1 — Global Model Training
 
 ```bash
-python init_global.py --template_csv data/chronic_kidney_disease_5000.csv --epochs 30 --batch 64 --lr 1e-3
+python3.11 init_global.py --template_csv data/chronic_kidney_disease_5000.csv --epochs 30 --batch 64 --lr 1e-3
 ```
 
 ---
@@ -156,19 +158,19 @@ python init_global.py --template_csv data/chronic_kidney_disease_5000.csv --epoc
 Client 1:
 
 ```bash
-python client_train_once.py --client_name Client1 --client_dir client1 --client_csv client1/dataset/client1_ckd.csv --premodel_ckpt client1/premodel_client1.pt --template_csv data/chronic_kidney_disease_5000.csv
+python3.11 client_train_once.py --client_name Client1 --client_dir client1 --client_csv client1/dataset/client1_ckd.csv --premodel_ckpt client1/premodel_client1.pt --template_csv data/chronic_kidney_disease_5000.csv
 ```
 
 Client 2:
 
 ```bash
-python client_train_once.py --client_name Client2 --client_dir client2 --client_csv client2/dataset/client2_ckd.csv --premodel_ckpt client2/premodel_client2.pt --template_csv data/chronic_kidney_disease_5000.csv
+python3.11 client_train_once.py --client_name Client2 --client_dir client2 --client_csv client2/dataset/client2_ckd.csv --premodel_ckpt client2/premodel_client2.pt --template_csv data/chronic_kidney_disease_5000.csv
 ```
 
 Client 3:
 
 ```bash
-python client_train_once.py --client_name Client3 --client_dir client3 --client_csv client3/dataset/client3_ckd.csv --premodel_ckpt client3/premodel_client3.pt --template_csv data/chronic_kidney_disease_5000.csv
+python3.11 client_train_once.py --client_name Client3 --client_dir client3 --client_csv client3/dataset/client3_ckd.csv --premodel_ckpt client3/premodel_client3.pt --template_csv data/chronic_kidney_disease_5000.csv
 ```
 
 ---
@@ -176,7 +178,7 @@ python client_train_once.py --client_name Client3 --client_dir client3 --client_
 ### ▶️ Step 7.3 — Federated Aggregation
 
 ```bash
-python aggregate_once.py --delta1 client1/delta_final.pt --delta2 client2/delta_final.pt --delta3 client3/delta_final.pt --template_csv data/chronic_kidney_disease_5000.csv
+python3.11 aggregate_once.py --delta1 client1/delta_final.pt --delta2 client2/delta_final.pt --delta3 client3/delta_final.pt --template_csv data/chronic_kidney_disease_5000.csv
 ```
 
 ---
@@ -184,7 +186,7 @@ python aggregate_once.py --delta1 client1/delta_final.pt --delta2 client2/delta_
 ### ▶️ Step 7.4 — Prediction
 
 ```bash
-python predict_from_patient_data.py --client_name Client2 --client_dir client2 --template_csv data/chronic_kidney_disease_5000.csv --patient_csv data/patient_data.csv
+python3.11 predict_from_patient_data.py --client_name Client2 --client_dir client2 --template_csv data/chronic_kidney_disease_5000.csv --patient_csv data/patient_data.csv
 ```
 
 Optional:

@@ -1,0 +1,2097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Federated Learning CKD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        /* Login Page */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem;
+        }
+
+        .login-box {
+            background: #ffffff;
+            padding: 3rem;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .login-box h1 {
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+            font-weight: 800;
+            text-align: center;
+        }
+
+        .login-box .subtitle {
+            color: #64748b;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #334155;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            font-family: inherit;
+            background: #ffffff;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.875rem;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message,
+        .success-message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: none;
+            font-size: 0.9rem;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .success-message {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 1.5rem;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            text-align: center;
+            width: 100%;
+        }
+
+        .back-link:hover {
+            color: #764ba2;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: none;
+        }
+
+        .navbar {
+            background: #ffffff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-name {
+            color: #64748b;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .btn-logout {
+            padding: 0.5rem 1rem;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+        }
+
+        .notification-container {
+            position: relative;
+        }
+
+        .notification-btn {
+            position: relative;
+            padding: 0.5rem 1rem;
+            background: #f1f5f9;
+            color: #0f172a;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .notification-btn:hover {
+            background: #e2e8f0;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            border-radius: 10px;
+            padding: 0.125rem 0.375rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            min-width: 18px;
+            text-align: center;
+            display: none;
+        }
+
+        .notification-dropdown {
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            width: 420px;
+            max-height: 500px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .notification-dropdown.show {
+            display: flex;
+        }
+
+        .notification-header {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notification-header h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        .mark-all-read-btn {
+            padding: 0.25rem 0.75rem;
+            background: transparent;
+            color: #2563eb;
+            border: 1px solid #2563eb;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .mark-all-read-btn:hover {
+            background: #2563eb;
+            color: white;
+        }
+
+        .notification-list {
+            overflow-y: auto;
+            max-height: 400px;
+        }
+
+        .notification-item {
+            padding: 1rem;
+            border-bottom: 1px solid #f1f5f9;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .notification-item:hover {
+            background: #f8fafc;
+        }
+
+        .notification-item.unread {
+            background: #eff6ff;
+        }
+
+        .notification-item.unread:hover {
+            background: #dbeafe;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+        }
+
+        .notification-message {
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .notification-time {
+            color: #94a3b8;
+            font-size: 0.75rem;
+        }
+
+        .empty-notifications {
+            padding: 2rem;
+            text-align: center;
+            color: #64748b;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #64748b;
+            font-size: 1rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transform: translateY(-4px);
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .stat-card:nth-child(1) .stat-value {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-card:nth-child(2) .stat-value {
+            background: linear-gradient(135deg, #10b981, #059669);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-card:nth-child(3) .stat-value {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-card:nth-child(4) .stat-value {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #e2e8f0;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: #64748b;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .tab:hover {
+            color: #3b82f6;
+        }
+
+        .tab.active {
+            color: #3b82f6;
+            border-bottom-color: #3b82f6;
+        }
+
+        .tab-content {
+            display: none;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .btn-primary {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-secondary {
+            padding: 0.5rem 1rem;
+            background: #64748b;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            padding: 0.5rem 1rem;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-danger {
+            padding: 0.5rem 1rem;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th {
+            background: #f8fafc;
+            padding: 1rem;
+            text-align: left;
+            color: #475569;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        table td {
+            padding: 1rem;
+            border-bottom: 1px solid #f1f5f9;
+            color: #64748b;
+        }
+
+        table tr:hover {
+            background: #f8fafc;
+        }
+
+        /* Badge */
+        .badge {
+            padding: 0.375rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 16px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .modal-header h2 {
+            color: #0f172a;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .btn-close {
+            background: #ef4444;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            line-height: 1;
+        }
+
+        .btn-close:hover {
+            background: #dc2626;
+            transform: rotate(90deg);
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #64748b;
+        }
+
+        .spinner {
+            border: 3px solid #f1f5f9;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Info Message */
+        .info-message {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .progress-container {
+            display: none;
+            margin-top: 1rem;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 1rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e2e8f0;
+            border-radius: 999px;
+            overflow: hidden;
+            margin: 0.75rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: width 0.4s ease;
+        }
+
+        .progress-status {
+            color: #475569;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .nav-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .tabs {
+                overflow-x: auto;
+            }
+
+            .tab {
+                white-space: nowrap;
+            }
+
+            table {
+                font-size: 0.875rem;
+            }
+
+            table th,
+            table td {
+                padding: 0.75rem 0.5rem;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-box {
+                padding: 2rem 1.5rem;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container">
+        <div class="login-box">
+            <h1>👑 Admin Login</h1>
+            <p class="subtitle">Federated Learning CKD System</p>
+            
+            <div id="loginError" class="error-message"></div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required value="admin" placeholder="Enter username">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required value="admin123" placeholder="Enter password">
+                </div>
+                
+                <button type="submit" class="btn" id="loginBtn">Login</button>
+            </form>
+            
+            <a href="/" class="back-link">← Back to Home</a>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-content">
+                <div class="nav-brand">Admin Dashboard</div>
+                <div class="nav-user">
+                    <div class="notification-container">
+                        <button class="notification-btn" onclick="toggleNotifications()">
+                            🔔 Notifications
+                            <span class="notification-badge" id="notificationBadge">0</span>
+                        </button>
+                        <div class="notification-dropdown" id="notificationDropdown">
+                            <div class="notification-header">
+                                <h3>Notifications</h3>
+                                <button class="mark-all-read-btn" onclick="markAllAsRead()">Mark all as read</button>
+                            </div>
+                            <div class="notification-list" id="notificationList">
+                                <div class="empty-notifications">No notifications</div>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="user-name" id="userName">Admin</span>
+                    <button class="btn-logout" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container">
+            <div class="page-header">
+                <h1 class="page-title">System Overview</h1>
+                <p class="page-subtitle">Monitor and manage federated learning operations</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Clients</div>
+                    <div class="stat-value" id="totalClients">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Active Clients</div>
+                    <div class="stat-value" id="activeClients">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Training Rounds</div>
+                    <div class="stat-value" id="trainingRounds">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Global Accuracy</div>
+                    <div class="stat-value" id="globalAccuracy">-</div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('clients')">Clients</button>
+                <button class="tab" onclick="switchTab('global')">Global Model</button>
+                <button class="tab" onclick="switchTab('history')">Aggregation History</button>
+                <button class="tab" onclick="switchTab('activities')">Activities</button>
+            </div>
+
+            <!-- Clients Tab -->
+            <div id="clientsTab" class="tab-content active">
+                <div class="section-header">
+                    <h2 class="section-title">Client Management</h2>
+                    <button class="btn-primary" onclick="showCreateClientModal()">+ Create Client</button>
+                </div>
+                <div id="clientsTable"></div>
+            </div>
+
+            <!-- Global Model Tab -->
+            <div id="globalTab" class="tab-content">
+                <div class="section-header">
+                    <h2 class="section-title">Global Model Management</h2>
+                    <div class="action-buttons">
+                        <button class="btn-primary" onclick="showInitializeModal()">Initialize Model</button>
+                        <button class="btn-danger" onclick="showResetGlobalModelModal()">Reset Global Model</button>
+                    </div>
+                </div>
+                <div id="globalMetrics"></div>
+                <div style="margin-top: 2rem;">
+                    <h3 style="margin-bottom: 1rem; color: #0f172a; font-size: 1.25rem;">Perform Aggregation</h3>
+                    <p class="info-message">
+                        Review the latest client local-model updates, accept or reject them, and aggregate only the accepted clients.
+                    </p>
+                    <div id="aggregationCandidatesContainer"></div>
+                    <div class="action-buttons" style="margin-top: 1rem;">
+                        <button class="btn-secondary" onclick="loadAggregationCandidates()">Refresh List</button>
+                        <button class="btn-primary" id="aggregateBtn" onclick="performAggregation()">Aggregate Accepted Clients</button>
+                    </div>
+                    <div id="aggregationProgressContainer" class="progress-container">
+                        <div class="progress-status" id="aggregationProgressStatus">Preparing aggregation...</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="aggregationProgressFill">0%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aggregation History Tab -->
+            <div id="historyTab" class="tab-content">
+                <div class="section-header">
+                    <h2 class="section-title">Aggregation History</h2>
+                    <button class="btn-secondary" onclick="loadAggregationHistory()">Refresh</button>
+                </div>
+                <div id="aggregationHistoryTable"></div>
+            </div>
+
+            <!-- Activities Tab -->
+            <div id="activitiesTab" class="tab-content">
+                <h2 class="section-title" style="margin-bottom: 1.5rem;">Recent Activities</h2>
+                <div id="activitiesTable"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Client Modal -->
+    <div id="createClientModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Client</h2>
+                <button class="btn-close" onclick="closeModal('createClientModal')">&times;</button>
+            </div>
+            <div id="createClientError" class="error-message"></div>
+            <div id="createClientSuccess" class="success-message"></div>
+            <form id="createClientForm">
+                <div class="form-group">
+                    <label>Client Name *</label>
+                    <input type="text" name="client_name" required placeholder="e.g., Hospital A">
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" name="email" required placeholder="client@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Login Password *</label>
+                    <input type="password" name="login_password" required placeholder="Enter login password">
+                </div>
+                <div class="form-group">
+                    <label>Training Password *</label>
+                    <input type="password" name="training_password" required placeholder="Enter training password">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <input type="text" name="description" placeholder="Optional description">
+                </div>
+                <button type="submit" class="btn">Create Client</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Client Modal -->
+    <div id="editClientModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Client</h2>
+                <button class="btn-close" onclick="closeModal('editClientModal')">&times;</button>
+            </div>
+            <div id="editClientError" class="error-message"></div>
+            <div id="editClientSuccess" class="success-message"></div>
+            <form id="editClientForm">
+                <input type="hidden" id="editClientId">
+                <div class="form-group">
+                    <label>Client Name *</label>
+                    <input type="text" id="editClientName" name="client_name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="editClientEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Login Password</label>
+                    <input type="password" id="editLoginPassword" name="login_password" placeholder="Leave blank to keep unchanged">
+                </div>
+                <div class="form-group">
+                    <label>Training Password</label>
+                    <input type="password" id="editTrainingPassword" name="training_password" placeholder="Leave blank to keep unchanged">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <input type="text" id="editDescription" name="description">
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="editStatus" name="status">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Initialize Model Modal -->
+    <div id="initializeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Initialize Global Model</h2>
+                <button class="btn-close" onclick="closeModal('initializeModal')">&times;</button>
+            </div>
+            <div id="initializeError" class="error-message"></div>
+            <div id="initializeSuccess" class="success-message"></div>
+            <div id="initializeProgressContainer" class="progress-container">
+                <div class="progress-status" id="initializeProgressStatus">Preparing initialization...</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="initializeProgressFill">0%</div>
+                </div>
+            </div>
+            <form id="initializeForm">
+                <div class="form-group">
+                    <label>Select Dataset *</label>
+                    <input type="file" id="templateCsvBrowse" accept=".csv" required>
+                    <input type="hidden" id="templateCsvPath" name="template_csv" value="">
+                    <small style="display:block;margin-top:0.5rem;color:#64748b;">
+                        Browse and select the dataset CSV to use for initial global training.
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label>Epochs</label>
+                    <input type="number" name="epochs" value="30" min="1" max="100">
+                </div>
+                <div class="form-group">
+                    <label>Batch Size</label>
+                    <input type="number" name="batch_size" value="64" min="8" max="256">
+                </div>
+                <div class="form-group">
+                    <label>Learning Rate</label>
+                    <input type="number" name="lr" value="0.001" step="0.0001" min="0.0001" max="0.1">
+                </div>
+                <button type="submit" class="btn">Initialize Model</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Reset Global Model Modal -->
+    <div id="resetGlobalModelModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Reset Global Model</h2>
+                <button class="btn-close" onclick="closeModal('resetGlobalModelModal')">&times;</button>
+            </div>
+            <div class="info-message" style="background:#fee2e2;color:#991b1b;border-left-color:#ef4444;">
+                This will remove the current global model, all client local models, aggregation state, training history, and reset each client's trained-record totals and last training status. Enter admin password to continue.
+            </div>
+            <div id="resetGlobalModelError" class="error-message"></div>
+            <div id="resetGlobalModelSuccess" class="success-message"></div>
+            <form id="resetGlobalModelForm">
+                <div class="form-group">
+                    <label>Admin Password *</label>
+                    <input type="password" id="resetAdminPassword" name="password" required placeholder="Enter admin password">
+                </div>
+                <button type="submit" class="btn">Confirm Reset</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let token = localStorage.getItem('admin_token');
+        let userName = localStorage.getItem('admin_name');
+
+        // Check if already logged in
+        if (token) {
+            showDashboard();
+        }
+
+        // Login Form
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('loginBtn');
+            btn.disabled = true;
+            btn.textContent = 'Logging in...';
+
+            const formData = {
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            };
+
+            try {
+                const response = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem('admin_token', data.access_token);
+                    localStorage.setItem('admin_name', data.user_name);
+                    token = data.access_token;
+                    userName = data.user_name;
+                    showDashboard();
+                } else {
+                    showError('loginError', data.detail || 'Login failed');
+                }
+            } catch (error) {
+                showError('loginError', 'Network error. Please try again.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Login';
+            }
+        });
+
+        function showDashboard() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('userName').textContent = userName || 'Admin';
+            loadDashboardData();
+            updateNotificationBadge();
+            setInterval(updateNotificationBadge, 30000);
+        }
+
+        function logout() {
+            localStorage.removeItem('admin_token');
+            localStorage.removeItem('admin_name');
+            location.reload();
+        }
+
+        async function loadDashboardData() {
+            await Promise.all([
+                loadStats(),
+                loadClients(),
+                loadActivities()
+            ]);
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/admin/dashboard/stats', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                document.getElementById('totalClients').textContent = data.total_clients;
+                document.getElementById('activeClients').textContent = data.active_clients;
+                document.getElementById('trainingRounds').textContent = data.total_training_rounds;
+                document.getElementById('globalAccuracy').textContent = 
+                    data.global_model_accuracy ? (data.global_model_accuracy * 100).toFixed(1) + '%' : 'N/A';
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        async function loadNotifications() {
+            try {
+                const response = await fetch('/api/admin/notifications', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const notifications = await response.json();
+                    displayNotifications(notifications);
+                    updateNotificationBadge();
+                }
+            } catch (error) {
+                console.error('Error loading notifications:', error);
+            }
+        }
+
+        async function updateNotificationBadge() {
+            try {
+                const response = await fetch('/api/admin/notifications/unread-count', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const badge = document.getElementById('notificationBadge');
+                    if (data.unread_count > 0) {
+                        badge.textContent = data.unread_count;
+                        badge.style.display = 'block';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                }
+            } catch (error) {
+                console.error('Error updating notification badge:', error);
+            }
+        }
+
+        function displayNotifications(notifications) {
+            const listContainer = document.getElementById('notificationList');
+
+            if (notifications.length === 0) {
+                listContainer.innerHTML = '<div class="empty-notifications">No notifications</div>';
+                return;
+            }
+
+            listContainer.innerHTML = notifications.map(notif => {
+                const date = new Date(notif.created_at);
+                const unreadClass = notif.is_read ? '' : 'unread';
+
+                return `
+                    <div class="notification-item ${unreadClass}" onclick="markNotificationRead(${notif.id})">
+                        <div class="notification-title">${notif.title}</div>
+                        <div class="notification-message">${notif.message}</div>
+                        <div class="notification-time">${getTimeAgo(date)}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+
+            if (seconds < 60) return 'Just now';
+            if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes ago`;
+            if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
+            if (seconds < 604800) return `${Math.floor(seconds / 86400)} days ago`;
+
+            return date.toLocaleDateString();
+        }
+
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notificationDropdown');
+            dropdown.classList.toggle('show');
+
+            if (dropdown.classList.contains('show')) {
+                loadNotifications();
+            }
+        }
+
+        async function markNotificationRead(notificationId) {
+            try {
+                await fetch(`/api/admin/notifications/${notificationId}/mark-read`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                loadNotifications();
+                updateNotificationBadge();
+            } catch (error) {
+                console.error('Error marking notification as read:', error);
+            }
+        }
+
+        async function markAllAsRead() {
+            try {
+                await fetch('/api/admin/notifications/mark-all-read', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                loadNotifications();
+                updateNotificationBadge();
+            } catch (error) {
+                console.error('Error marking all notifications as read:', error);
+            }
+        }
+
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('notificationDropdown');
+            const button = document.querySelector('.notification-btn');
+
+            if (dropdown && button && !dropdown.contains(event.target) && !button.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        async function loadClients() {
+            try {
+                const response = await fetch('/api/admin/clients', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const clients = await response.json();
+
+                if (clients.length === 0) {
+                    document.getElementById('clientsTable').innerHTML = '<p style="color: #64748b; text-align: center; padding: 2rem;">No clients registered yet.</p>';
+                    return;
+                }
+
+                const html = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Client Name</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Update Status</th>
+                                <th>Last Trained</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${clients.map(client => `
+                                <tr>
+                                    <td>${client.client_name}</td>
+                                    <td>${client.email}</td>
+                                    <td><span class="badge ${client.status === 'active' ? 'badge-success' : 'badge-danger'}">${client.status}</span></td>
+                                    <td><span class="badge ${client.update_status === 'New Update Available' ? 'badge-warning' : 'badge-info'}">${client.update_status}</span></td>
+                                    <td>${client.last_trained_time || 'Never'}</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn-secondary" onclick="showEditClientModal(${client.id})">Edit</button>
+                                            ${client.status === 'active'
+                                                ? `<button class="btn-warning btn-secondary" onclick="toggleClientStatus(${client.id}, 'inactive')">Deactivate</button>`
+                                                : `<button class="btn-success" onclick="toggleClientStatus(${client.id}, 'active')">Activate</button>`}
+                                            <button class="btn-danger" onclick="deleteClient(${client.id}, '${client.client_name.replace(/'/g, "\\'")}')">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                document.getElementById('clientsTable').innerHTML = html;
+            } catch (error) {
+                console.error('Error loading clients:', error);
+            }
+        }
+
+        async function loadActivities() {
+            try {
+                const response = await fetch('/api/admin/dashboard/stats', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                if (!data.recent_activities || data.recent_activities.length === 0) {
+                    document.getElementById('activitiesTable').innerHTML = '<p style="color: #64748b; text-align: center; padding: 2rem;">No recent activities.</p>';
+                    return;
+                }
+
+                const html = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Action</th>
+                                <th>Details</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.recent_activities.map(activity => `
+                                <tr>
+                                    <td>${activity.user_name}</td>
+                                    <td>${activity.action}</td>
+                                    <td>${activity.details}</td>
+                                    <td>${new Date(activity.timestamp).toLocaleString()}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                document.getElementById('activitiesTable').innerHTML = html;
+            } catch (error) {
+                console.error('Error loading activities:', error);
+            }
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tab + 'Tab').classList.add('active');
+
+            if (tab === 'global') {
+                loadGlobalMetrics();
+                loadAggregationCandidates();
+            } else if (tab === 'history') {
+                loadAggregationHistory();
+            }
+        }
+
+        async function loadAggregationHistory() {
+            try {
+                const response = await fetch('/api/admin/aggregation-history', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const history = await response.json();
+
+                if (!history || history.length === 0) {
+                    document.getElementById('aggregationHistoryTable').innerHTML =
+                        '<p style="color: #64748b; text-align: center; padding: 2rem;">No aggregation history available yet.</p>';
+                    return;
+                }
+
+                const html = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Round</th>
+                                <th>Date & Time</th>
+                                <th>Clients</th>
+                                <th>Accuracy</th>
+                                <th>Loss</th>
+                                <th>Improvement</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${history.map(record => {
+                                const accuracyBadge = record.global_accuracy !== null
+                                    ? `<span class="badge badge-success">${(record.global_accuracy * 100).toFixed(2)}%</span>`
+                                    : '<span class="badge badge-info">N/A</span>';
+                                
+                                const improvementBadge = record.accuracy_improvement !== null
+                                    ? record.accuracy_improvement >= 0
+                                        ? `<span class="badge badge-success">+${(record.accuracy_improvement * 100).toFixed(2)}%</span>`
+                                        : `<span class="badge badge-danger">${(record.accuracy_improvement * 100).toFixed(2)}%</span>`
+                                    : '<span class="badge badge-info">-</span>';
+                                
+                                const clientsList = record.clients_participated.join(', ');
+                                const clientsBadge = `<span class="badge badge-info">${record.num_clients} client${record.num_clients > 1 ? 's' : ''}</span>`;
+                                
+                                return `
+                                    <tr>
+                                        <td><strong>Round ${record.round_number}</strong></td>
+                                        <td>${new Date(record.created_at).toLocaleString()}</td>
+                                        <td>
+                                            ${clientsBadge}
+                                            <div style="font-size: 0.85rem; color: #64748b; margin-top: 0.25rem;">
+                                                ${clientsList}
+                                            </div>
+                                        </td>
+                                        <td>${accuracyBadge}</td>
+                                        <td>${record.global_loss !== null ? record.global_loss.toFixed(4) : 'N/A'}</td>
+                                        <td>${improvementBadge}</td>
+                                        <td>${record.aggregation_time !== null ? record.aggregation_time.toFixed(2) + 's' : 'N/A'}</td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                `;
+                document.getElementById('aggregationHistoryTable').innerHTML = html;
+            } catch (error) {
+                console.error('Error loading aggregation history:', error);
+                document.getElementById('aggregationHistoryTable').innerHTML =
+                    '<p style="color: #ef4444; padding: 1rem;">Failed to load aggregation history.</p>';
+            }
+        }
+
+        async function loadGlobalMetrics() {
+            try {
+                const response = await fetch('/api/admin/global-metrics', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                const html = `
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Round Number</div>
+                            <div class="stat-value">${data.round_number}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Accuracy</div>
+                            <div class="stat-value">${data.accuracy ? (data.accuracy * 100).toFixed(1) + '%' : 'N/A'}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Loss</div>
+                            <div class="stat-value">${data.loss ? data.loss.toFixed(4) : 'N/A'}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Last Aggregation</div>
+                            <div class="stat-value" style="font-size: 1.2rem;">${data.last_aggregation ? new Date(data.last_aggregation).toLocaleDateString() : 'Never'}</div>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('globalMetrics').innerHTML = html;
+            } catch (error) {
+                console.error('Error loading global metrics:', error);
+            }
+        }
+
+        let aggregationCandidates = [];
+        let acceptedAggregationClientIds = new Set();
+
+        function showCreateClientModal() {
+            document.getElementById('createClientModal').classList.add('active');
+        }
+
+        async function loadAggregationCandidates() {
+            try {
+                const response = await fetch('/api/admin/aggregation-candidates', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const candidates = await response.json();
+                aggregationCandidates = Array.isArray(candidates) ? candidates : [];
+                acceptedAggregationClientIds = new Set(aggregationCandidates.map(client => client.client_id));
+                renderAggregationCandidates();
+            } catch (error) {
+                console.error('Error loading aggregation candidates:', error);
+                document.getElementById('aggregationCandidatesContainer').innerHTML =
+                    '<p style="color: #ef4444; padding: 1rem 0;">Failed to load aggregation candidates.</p>';
+            }
+        }
+
+        function renderAggregationCandidates() {
+            const container = document.getElementById('aggregationCandidatesContainer');
+
+            if (!aggregationCandidates.length) {
+                container.innerHTML = '<p style="color: #64748b; text-align: center; padding: 1rem 0;">No client updates are currently ready for aggregation.</p>';
+                return;
+            }
+
+            const html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Client Name</th>
+                            <th>Updated At</th>
+                            <th>Accuracy</th>
+                            <th>Loss</th>
+                            <th>Dataset Size</th>
+                            <th>Total Records Trained</th>
+                            <th>Training Time</th>
+                            <th>Decision</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${aggregationCandidates.map(client => {
+                            const isAccepted = acceptedAggregationClientIds.has(client.client_id);
+                            return `
+                                <tr>
+                                    <td>${client.client_name}</td>
+                                    <td>${client.last_trained_time ? new Date(client.last_trained_time).toLocaleString() : 'Never'}</td>
+                                    <td>${client.accuracy !== null && client.accuracy !== undefined ? (client.accuracy * 100).toFixed(2) + '%' : 'N/A'}</td>
+                                    <td>${client.loss !== null && client.loss !== undefined ? Number(client.loss).toFixed(4) : 'N/A'}</td>
+                                    <td>${client.dataset_size ?? 'N/A'}</td>
+                                    <td>${client.total_records_trained ?? 0}</td>
+                                    <td>${client.training_time !== null && client.training_time !== undefined ? Number(client.training_time).toFixed(2) + 's' : 'N/A'}</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="${isAccepted ? 'btn-success' : 'btn-secondary'}" onclick="acceptAggregationClient(${client.client_id})">
+                                                ${isAccepted ? 'Accepted' : 'Accept'}
+                                            </button>
+                                            <button class="btn-danger" onclick="rejectAggregationClient(${client.client_id})">Reject</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+            container.innerHTML = html;
+        }
+
+        function acceptAggregationClient(clientId) {
+            acceptedAggregationClientIds.add(clientId);
+            renderAggregationCandidates();
+        }
+
+        function rejectAggregationClient(clientId) {
+            acceptedAggregationClientIds.delete(clientId);
+            aggregationCandidates = aggregationCandidates.filter(client => client.client_id !== clientId);
+            renderAggregationCandidates();
+        }
+
+        function showEditClientModal(clientId) {
+            fetch(`/api/admin/clients/${clientId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            })
+            .then(response => response.json())
+            .then(client => {
+                document.getElementById('editClientId').value = client.id;
+                document.getElementById('editClientName').value = client.client_name;
+                document.getElementById('editClientEmail').value = client.email;
+                document.getElementById('editDescription').value = client.description || '';
+                document.getElementById('editStatus').value = client.status;
+                document.getElementById('editLoginPassword').value = '';
+                document.getElementById('editTrainingPassword').value = '';
+                document.getElementById('editClientModal').classList.add('active');
+            })
+            .catch(() => alert('Failed to load client details'));
+        }
+
+        async function showInitializeModal() {
+            const password = prompt('Enter admin password to open initial global training:');
+            if (!password) {
+                return;
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append('password', password);
+
+                const response = await fetch('/api/admin/global-model/reset', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ password })
+                });
+
+                if (!response.ok) {
+                    const result = await response.json();
+                    alert(result.detail || 'Invalid admin password');
+                    return;
+                }
+
+                document.getElementById('initializeForm').reset();
+                document.getElementById('templateCsvPath').value = '';
+                document.getElementById('initializeModal').classList.add('active');
+            } catch (error) {
+                alert('Password verification failed. Please try again.');
+            }
+        }
+
+        function showResetGlobalModelModal() {
+            document.getElementById('resetGlobalModelForm').reset();
+            document.getElementById('resetGlobalModelModal').classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        document.getElementById('createClientForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+
+            try {
+                const response = await fetch('/api/admin/clients', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showSuccess('createClientSuccess', 'Client created successfully!');
+                    e.target.reset();
+                    setTimeout(() => {
+                        closeModal('createClientModal');
+                        loadClients();
+                        loadStats();
+                    }, 2000);
+                } else {
+                    showError('createClientError', result.detail || 'Failed to create client');
+                }
+            } catch (error) {
+                showError('createClientError', 'Network error. Please try again.');
+            }
+        });
+
+        document.getElementById('editClientForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const clientId = document.getElementById('editClientId').value;
+            const payload = {
+                client_name: document.getElementById('editClientName').value,
+                email: document.getElementById('editClientEmail').value,
+                description: document.getElementById('editDescription').value,
+                status: document.getElementById('editStatus').value
+            };
+
+            const loginPassword = document.getElementById('editLoginPassword').value.trim();
+            const trainingPassword = document.getElementById('editTrainingPassword').value.trim();
+
+            if (loginPassword) payload.login_password = loginPassword;
+            if (trainingPassword) payload.training_password = trainingPassword;
+
+            try {
+                const response = await fetch(`/api/admin/clients/${clientId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showSuccess('editClientSuccess', 'Client updated successfully!');
+                    setTimeout(() => {
+                        closeModal('editClientModal');
+                        loadClients();
+                        loadStats();
+                    }, 1500);
+                } else {
+                    showError('editClientError', result.detail || 'Failed to update client');
+                }
+            } catch (error) {
+                showError('editClientError', 'Network error. Please try again.');
+            }
+        });
+
+        document.getElementById('resetGlobalModelForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!confirm('Are you sure you want to reset the global model and clear aggregation/training state?')) {
+                return;
+            }
+
+            const password = document.getElementById('resetAdminPassword').value;
+
+            try {
+                const response = await fetch('/api/admin/global-model/reset', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ password })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showSuccess('resetGlobalModelSuccess', 'Global model reset successfully!');
+                    aggregationCandidates = [];
+                    acceptedAggregationClientIds = new Set();
+                    renderAggregationCandidates();
+                    setTimeout(() => {
+                        closeModal('resetGlobalModelModal');
+                        loadDashboardData();
+                        loadGlobalMetrics();
+                        loadAggregationCandidates();
+                    }, 1500);
+                } else {
+                    showError('resetGlobalModelError', result.detail || 'Failed to reset global model');
+                }
+            } catch (error) {
+                showError('resetGlobalModelError', 'Network error. Please try again.');
+            }
+        });
+
+        document.getElementById('templateCsvBrowse').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            document.getElementById('templateCsvPath').value = `Datasets/${file.name}`;
+        });
+
+        function startFakeProgress(containerId, fillId, statusId, steps) {
+            const container = document.getElementById(containerId);
+            const fill = document.getElementById(fillId);
+            const status = document.getElementById(statusId);
+
+            let index = 0;
+            container.style.display = 'block';
+            fill.style.width = `${steps[0].percent}%`;
+            fill.textContent = `${steps[0].percent}%`;
+            status.textContent = steps[0].label;
+
+            const interval = setInterval(() => {
+                if (index < steps.length - 1) {
+                    index += 1;
+                    fill.style.width = `${steps[index].percent}%`;
+                    fill.textContent = `${steps[index].percent}%`;
+                    status.textContent = steps[index].label;
+                }
+            }, 1200);
+
+            return interval;
+        }
+
+        function finishProgress(interval, fillId, statusId, message) {
+            clearInterval(interval);
+            const fill = document.getElementById(fillId);
+            const status = document.getElementById(statusId);
+            fill.style.width = '100%';
+            fill.textContent = '100%';
+            status.textContent = message;
+        }
+
+        function resetProgress(containerId, fillId, statusId, initialMessage) {
+            const container = document.getElementById(containerId);
+            const fill = document.getElementById(fillId);
+            const status = document.getElementById(statusId);
+
+            setTimeout(() => {
+                container.style.display = 'none';
+                fill.style.width = '0%';
+                fill.textContent = '0%';
+                status.textContent = initialMessage;
+            }, 1500);
+        }
+
+        document.getElementById('templateCsvBrowse').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) {
+                document.getElementById('templateCsvPath').value = '';
+                return;
+            }
+
+            document.getElementById('templateCsvPath').value = `Datasets/${file.name}`;
+        });
+
+        document.getElementById('initializeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+
+            if (!data.template_csv) {
+                showError('initializeError', 'Please browse and select a dataset before initializing.');
+                return;
+            }
+
+            const adminPassword = prompt('Enter admin password to start initial global training:');
+            if (!adminPassword) {
+                return;
+            }
+
+            const progressInterval = startFakeProgress(
+                'initializeProgressContainer',
+                'initializeProgressFill',
+                'initializeProgressStatus',
+                [
+                    { percent: 10, label: 'Validating admin password and selected dataset...' },
+                    { percent: 30, label: 'Loading and preprocessing data...' },
+                    { percent: 55, label: 'Training initial global model...' },
+                    { percent: 80, label: 'Evaluating and saving model...' }
+                ]
+            );
+
+            try {
+                const response = await fetch(`/api/admin/initialize-global-model?template_csv=${encodeURIComponent(data.template_csv)}&admin_password=${encodeURIComponent(adminPassword)}&epochs=${data.epochs}&batch_size=${data.batch_size}&lr=${data.lr}`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    finishProgress(progressInterval, 'initializeProgressFill', 'initializeProgressStatus', 'Global model initialized successfully!');
+                    showSuccess('initializeSuccess', 'Global model initialized successfully!');
+                    setTimeout(() => {
+                        closeModal('initializeModal');
+                        loadStats();
+                        loadGlobalMetrics();
+                        resetProgress('initializeProgressContainer', 'initializeProgressFill', 'initializeProgressStatus', 'Preparing initialization...');
+                        document.getElementById('initializeForm').reset();
+                        document.getElementById('templateCsvPath').value = '';
+                    }, 2000);
+                } else {
+                    clearInterval(progressInterval);
+                    resetProgress('initializeProgressContainer', 'initializeProgressFill', 'initializeProgressStatus', 'Preparing initialization...');
+                    showError('initializeError', result.detail || 'Failed to initialize model');
+                }
+            } catch (error) {
+                clearInterval(progressInterval);
+                resetProgress('initializeProgressContainer', 'initializeProgressFill', 'initializeProgressStatus', 'Preparing initialization...');
+                showError('initializeError', 'Network error. Please try again.');
+            }
+        });
+
+        async function performAggregation() {
+            const selectedClientIds = Array.from(acceptedAggregationClientIds);
+
+            if (selectedClientIds.length === 0) {
+                alert('No accepted clients available for aggregation.');
+                return;
+            }
+
+            if (!confirm(`Perform federated aggregation for ${selectedClientIds.length} accepted client(s)?`)) {
+                return;
+            }
+
+            const aggregateBtn = document.getElementById('aggregateBtn');
+            aggregateBtn.disabled = true;
+
+            const progressInterval = startFakeProgress(
+                'aggregationProgressContainer',
+                'aggregationProgressFill',
+                'aggregationProgressStatus',
+                [
+                    { percent: 10, label: 'Validating accepted clients...' },
+                    { percent: 35, label: 'Collecting selected client model deltas...' },
+                    { percent: 65, label: 'Performing federated averaging...' },
+                    { percent: 85, label: 'Saving updated global model and notifying clients...' }
+                ]
+            );
+
+            try {
+                console.log('Starting aggregation for clients:', selectedClientIds);
+                
+                const response = await fetch('/api/admin/aggregate', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ client_ids: selectedClientIds })
+                });
+
+                console.log('Response status:', response.status);
+                console.log('Response content-type:', response.headers.get('content-type'));
+
+                // Get response as text first to handle both JSON and HTML errors
+                const responseText = await response.text();
+                console.log('Response text:', responseText);
+
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('Failed to parse response as JSON:', parseError);
+                    console.error('Response was:', responseText.substring(0, 500));
+                    throw new Error('Server returned invalid response (likely an internal error). Check server logs.');
+                }
+
+                if (response.ok) {
+                    finishProgress(progressInterval, 'aggregationProgressFill', 'aggregationProgressStatus', 'Aggregation completed successfully!');
+                    aggregationCandidates = [];
+                    acceptedAggregationClientIds = new Set();
+                    renderAggregationCandidates();
+                    setTimeout(() => {
+                        alert(`Aggregation successful!\nRound: ${result.round_number}\nClients: ${result.clients_participated.join(', ')}`);
+                        loadDashboardData();
+                        loadAggregationCandidates();
+                        resetProgress('aggregationProgressContainer', 'aggregationProgressFill', 'aggregationProgressStatus', 'Preparing aggregation...');
+                    }, 1200);
+                } else {
+                    clearInterval(progressInterval);
+                    resetProgress('aggregationProgressContainer', 'aggregationProgressFill', 'aggregationProgressStatus', 'Preparing aggregation...');
+                    const errorMsg = result.detail || result.message || 'Unknown error';
+                    console.error('Aggregation failed:', errorMsg);
+                    
+                    let userMessage = 'Aggregation failed: ' + errorMsg;
+                    if (errorMsg.includes('No clients with new updates')) {
+                        userMessage += '\n\nThe selected clients may have already been aggregated or need to train first.\n\nPlease:\n1. Ensure clients have trained their models\n2. Check that clients have "New Update Available" status\n3. Refresh the aggregation candidates list';
+                    }
+                    alert(userMessage);
+                }
+            } catch (error) {
+                clearInterval(progressInterval);
+                resetProgress('aggregationProgressContainer', 'aggregationProgressFill', 'aggregationProgressStatus', 'Preparing aggregation...');
+                console.error('Aggregation error details:', error);
+                console.error('Error stack:', error.stack);
+                
+                let errorMessage = 'Network error during aggregation.\n\n';
+                errorMessage += 'Error: ' + error.message + '\n\n';
+                errorMessage += 'Please check:\n';
+                errorMessage += '1. Server is running on http://localhost:8000\n';
+                errorMessage += '2. Network connection is stable\n';
+                errorMessage += '3. Browser console (F12) for detailed error logs\n';
+                errorMessage += '4. Server terminal for backend errors';
+                
+                alert(errorMessage);
+            } finally {
+                aggregateBtn.disabled = false;
+            }
+        }
+
+        async function toggleClientStatus(clientId, statusValue) {
+            const actionLabel = statusValue === 'active' ? 'activate' : 'deactivate';
+            if (!confirm(`Are you sure you want to ${actionLabel} this client?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/admin/clients/${clientId}/status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status: statusValue })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert(`Client ${actionLabel}d successfully`);
+                    loadClients();
+                    loadStats();
+                } else {
+                    alert(result.detail || `Failed to ${actionLabel} client`);
+                }
+            } catch (error) {
+                alert('Network error. Please try again.');
+            }
+        }
+
+        async function deleteClient(clientId, clientName) {
+            if (!confirm(`Permanently delete client "${clientName}"? This action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/admin/clients/${clientId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert('Client deleted successfully');
+                    loadClients();
+                    loadStats();
+                } else {
+                    alert(result.detail || 'Failed to delete client');
+                }
+            } catch (error) {
+                alert('Network error. Please try again.');
+            }
+        }
+
+        function formatMessage(message) {
+            if (typeof message === 'string') {
+                return message;
+            }
+
+            if (Array.isArray(message)) {
+                return message.map(item => formatMessage(item)).join(', ');
+            }
+
+            if (message && typeof message === 'object') {
+                if (typeof message.detail === 'string') {
+                    return message.detail;
+                }
+
+                if (Array.isArray(message.detail)) {
+                    return message.detail.map(item => {
+                        if (typeof item === 'string') return item;
+                        if (item && typeof item === 'object') {
+                            const field = Array.isArray(item.loc) ? item.loc.slice(1).join('.') : 'field';
+                            return `${field}: ${item.msg || JSON.stringify(item)}`;
+                        }
+                        return String(item);
+                    }).join(', ');
+                }
+
+                if (typeof message.msg === 'string') {
+                    return message.msg;
+                }
+
+                return JSON.stringify(message);
+            }
+
+            return String(message);
+        }
+
+        function showError(elementId, message) {
+            const el = document.getElementById(elementId);
+            el.textContent = formatMessage(message);
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 5000);
+        }
+
+        function showSuccess(elementId, message) {
+            const el = document.getElementById(elementId);
+            el.textContent = formatMessage(message);
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 5000);
+        }
+    </script>
+</body>
+</html>

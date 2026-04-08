@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help & Guide - Federated Learning CKD System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background: #ffffff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .back-home-btn {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-home-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 1rem;
+        }
+
+        .page-header .gradient-text {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-header p {
+            font-size: 1.25rem;
+            color: #64748b;
+        }
+
+        /* Content Sections */
+        .help-section {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .help-section h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .help-section h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #334155;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .help-section p {
+            color: #475569;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .help-section ul, .help-section ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .help-section li {
+            color: #475569;
+            margin-bottom: 0.5rem;
+            padding-left: 0.5rem;
+        }
+
+        .icon {
+            font-size: 1.5rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .feature-card {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+        }
+
+        .feature-card h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            font-size: 0.95rem;
+            color: #64748b;
+            margin-bottom: 0;
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-right: 0.75rem;
+        }
+
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .alert {
+            background: #dbeafe;
+            border-left: 4px solid #3b82f6;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            border-left-color: #f59e0b;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            border-left-color: #10b981;
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .help-section {
+                padding: 1.5rem;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">
+                <div class="logo-icon">🏥</div>
+                <span>FL-CKD System</span>
+            </div>
+            <a href="/" class="back-home-btn">
+                <span>←</span>
+                <span>Back to Home</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="page-header">
+            <h1><span class="gradient-text">Help & User Guide</span></h1>
+            <p>Complete guide to using the Federated Learning CKD System</p>
+        </div>
+
+        <!-- About Section -->
+        <div class="help-section">
+            <h2><span class="icon">📖</span> About the System</h2>
+            <p>
+                The Federated Learning Chronic Kidney Disease (FL-CKD) System is an advanced healthcare platform that enables 
+                multiple medical institutions to collaboratively train machine learning models for CKD prediction without 
+                sharing sensitive patient data.
+            </p>
+            <p>
+                This system implements <strong>Federated Learning</strong> with <strong>Differential Privacy</strong> to ensure 
+                data security and patient confidentiality while improving diagnostic accuracy through collaborative learning.
+            </p>
+            
+            <div class="alert alert-success">
+                <strong>Key Benefit:</strong> Healthcare providers can benefit from collective intelligence without compromising 
+                patient privacy or violating data protection regulations.
+            </div>
+        </div>
+
+        <!-- Key Features -->
+        <div class="help-section">
+            <h2><span class="icon">✨</span> Key Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>🔒 Privacy-Preserving</h4>
+                    <p>Patient data never leaves the local institution. Only model updates are shared.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🤝 Collaborative Learning</h4>
+                    <p>Multiple clients train together to create a more robust global model.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🎯 Accurate Predictions</h4>
+                    <p>Advanced neural network models for CKD risk assessment and diagnosis.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📊 Real-time Dashboard</h4>
+                    <p>Monitor training progress, metrics, and model performance in real-time.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🔐 Differential Privacy</h4>
+                    <p>Additional privacy layer with noise injection to protect individual records.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📈 Performance Metrics</h4>
+                    <p>Comprehensive evaluation with accuracy, precision, recall, and F1-score.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Getting Started -->
+        <div class="help-section">
+            <h2><span class="icon">🚀</span> Getting Started</h2>
+            
+            <h3><span class="step-number">1</span> Choose Your Portal</h3>
+            <p>The system has two main portals:</p>
+            <ul>
+                <li><strong>Admin Portal:</strong> For system administrators to manage clients, monitor global training, and oversee the federated learning process.</li>
+                <li><strong>Client Portal:</strong> For healthcare institutions to upload data, train local models, and make predictions.</li>
+            </ul>
+
+            <h3><span class="step-number">2</span> Login</h3>
+            <p>Use your credentials provided by the system administrator to access your respective portal.</p>
+            <div class="alert">
+                <strong>Note:</strong> If you don't have credentials, contact your system administrator for account setup.
+            </div>
+
+            <h3><span class="step-number">3</span> Navigate the Dashboard</h3>
+            <p>Once logged in, you'll see a dashboard with multiple sections tailored to your role.</p>
+        </div>
+
+        <!-- Admin Guide -->
+        <div class="help-section">
+            <h2><span class="icon">👨‍💼</span> Admin Portal Guide</h2>
+            
+            <h3>Client Management</h3>
+            <p>Administrators can:</p>
+            <ul>
+                <li>Register new healthcare institutions as clients</li>
+                <li>View all registered clients and their status</li>
+                <li>Monitor client participation in training rounds</li>
+                <li>Manage client credentials and permissions</li>
+            </ul>
+
+            <h3>Global Model Management</h3>
+            <p>Control the federated learning process:</p>
+            <ul>
+                <li><strong>Initialize Global Model:</strong> Set up the initial model architecture and parameters</li>
+                <li><strong>Aggregate Updates:</strong> Combine model updates from all participating clients</li>
+                <li><strong>Monitor Performance:</strong> Track global model accuracy and convergence</li>
+                <li><strong>Distribute Model:</strong> Share the updated global model with all clients</li>
+            </ul>
+
+            <h3>System Monitoring</h3>
+            <ul>
+                <li>View training round history and statistics</li>
+                <li>Monitor system health and performance metrics</li>
+                <li>Track client participation and contribution</li>
+                <li>Review aggregation logs and model versions</li>
+            </ul>
+        </div>
+
+        <!-- Client Guide -->
+        <div class="help-section">
+            <h2><span class="icon">🏥</span> Client Portal Guide</h2>
+            
+            <h3>Data Upload & Training</h3>
+            <p>Healthcare institutions can participate in federated learning:</p>
+            <ol>
+                <li><strong>Prepare Your Dataset:</strong> Format patient data according to the required schema (CSV format)</li>
+                <li><strong>Upload Data:</strong> Securely upload your dataset through the training section</li>
+                <li><strong>Start Training:</strong> Initiate local model training on your data</li>
+                <li><strong>Submit Updates:</strong> Send encrypted model updates to the central server</li>
+            </ol>
+
+            <div class="alert alert-warning">
+                <strong>Important:</strong> Your raw patient data never leaves your local system. Only encrypted model 
+                parameters are transmitted to the server.
+            </div>
+
+            <h3>Making Predictions</h3>
+            <p>Use the trained model to predict CKD risk for new patients:</p>
+            <ol>
+                <li>Navigate to the <strong>Prediction</strong> section</li>
+                <li>Enter patient information (age, blood pressure, glucose levels, etc.)</li>
+                <li>Click <strong>Predict</strong> to get the CKD risk assessment</li>
+                <li>Review the prediction results and confidence scores</li>
+            </ol>
+
+            <h3>Dashboard & Metrics</h3>
+            <p>Monitor your local model performance:</p>
+            <ul>
+                <li>View training history and loss curves</li>
+                <li>Check model accuracy, precision, and recall</li>
+                <li>Compare local vs. global model performance</li>
+                <li>Track participation in federated rounds</li>
+            </ul>
+        </div>
+
+        <!-- Data Format -->
+        <div class="help-section">
+            <h2><span class="icon">📋</span> Data Format Requirements</h2>
+            
+            <h3>Required Patient Features</h3>
+            <p>The CKD prediction model requires the following patient information:</p>
+            <ul>
+                <li><strong>Age:</strong> Patient age in years</li>
+                <li><strong>Blood Pressure:</strong> Systolic/Diastolic measurements</li>
+                <li><strong>Specific Gravity:</strong> Urine specific gravity</li>
+                <li><strong>Albumin:</strong> Albumin levels in urine</li>
+                <li><strong>Sugar:</strong> Sugar levels in urine</li>
+                <li><strong>Red Blood Cells:</strong> RBC count</li>
+                <li><strong>Pus Cells:</strong> Presence of pus cells</li>
+                <li><strong>Blood Glucose:</strong> Random blood glucose levels</li>
+                <li><strong>Blood Urea:</strong> Blood urea nitrogen levels</li>
+                <li><strong>Serum Creatinine:</strong> Creatinine levels in blood</li>
+                <li><strong>Sodium/Potassium:</strong> Electrolyte levels</li>
+                <li><strong>Hemoglobin:</strong> Hemoglobin count</li>
+                <li><strong>And other relevant clinical parameters</strong></li>
+            </ul>
+
+            <h3>CSV File Format</h3>
+            <p>Upload data in CSV format with proper column headers. Example:</p>
+            <div class="code-block">
+age,bp,sg,al,su,rbc,pc,bgr,bu,sc,sod,pot,hemo,classification<br>
+48,80,1.020,1,0,normal,abnormal,121,36,1.2,138,4.5,15.4,ckd<br>
+53,90,1.020,2,0,abnormal,normal,70,107,7.2,114,3.7,9.4,ckd
+            </div>
+        </div>
+
+        <!-- Privacy & Security -->
+        <div class="help-section">
+            <h2><span class="icon">🔐</span> Privacy & Security</h2>
+            
+            <h3>How Your Data is Protected</h3>
+            <ul>
+                <li><strong>Local Training:</strong> All patient data remains on your local server</li>
+                <li><strong>Encrypted Communication:</strong> Model updates are encrypted during transmission</li>
+                <li><strong>Differential Privacy:</strong> Noise is added to model updates to prevent data inference</li>
+                <li><strong>Secure Aggregation:</strong> Server cannot access individual client data</li>
+                <li><strong>Access Control:</strong> Role-based authentication and authorization</li>
+            </ul>
+
+            <h3>Compliance</h3>
+            <p>
+                The system is designed to comply with healthcare data protection regulations including HIPAA, GDPR, 
+                and other regional privacy laws. Patient data never leaves the healthcare institution's premises.
+            </p>
+        </div>
+
+        <!-- Troubleshooting -->
+        <div class="help-section">
+            <h2><span class="icon">🔧</span> Troubleshooting</h2>
+            
+            <h3>Common Issues</h3>
+            
+            <h4>Cannot Login</h4>
+            <ul>
+                <li>Verify your username and password are correct</li>
+                <li>Check if your account is active</li>
+                <li>Contact the administrator if you've forgotten your credentials</li>
+            </ul>
+
+            <h4>Upload Fails</h4>
+            <ul>
+                <li>Ensure your CSV file is properly formatted</li>
+                <li>Check that all required columns are present</li>
+                <li>Verify file size is within limits</li>
+                <li>Make sure there are no special characters in column names</li>
+            </ul>
+
+            <h4>Training Errors</h4>
+            <ul>
+                <li>Verify your dataset has sufficient samples (minimum 100 records recommended)</li>
+                <li>Check for missing values in critical columns</li>
+                <li>Ensure data types are correct (numeric values for measurements)</li>
+                <li>Review error messages in the dashboard for specific issues</li>
+            </ul>
+
+            <h4>Prediction Not Working</h4>
+            <ul>
+                <li>Ensure a model has been trained first</li>
+                <li>Verify all required patient information is provided</li>
+                <li>Check that input values are within valid ranges</li>
+                <li>Try refreshing the page and logging in again</li>
+            </ul>
+        </div>
+
+        <!-- Support -->
+        <div class="help-section">
+            <h2><span class="icon">💬</span> Support & Contact</h2>
+            <p>
+                If you need additional assistance or have questions not covered in this guide:
+            </p>
+            <ul>
+                <li><strong>Technical Support:</strong> Contact your system administrator</li>
+                <li><strong>Training Issues:</strong> Review the troubleshooting section above</li>
+                <li><strong>Feature Requests:</strong> Submit feedback through your portal dashboard</li>
+                <li><strong>Security Concerns:</strong> Report immediately to the system administrator</li>
+            </ul>
+            
+            <div class="alert alert-success">
+                <strong>Quick Tip:</strong> Most common issues can be resolved by ensuring your data is properly formatted 
+                and all required fields are filled in correctly.
+            </div>
+        </div>
+
+        <!-- Back to Home Button -->
+        <div style="text-align: center; margin-top: 3rem;">
+            <a href="/" class="back-home-btn" style="display: inline-flex;">
+                <span>←</span>
+                <span>Back to Home</span>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

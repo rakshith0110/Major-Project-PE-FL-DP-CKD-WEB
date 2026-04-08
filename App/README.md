@@ -1,350 +1,407 @@
-# 🩺 FL-DP Healthcare Web Application
+# 🏥 Federated Learning CKD Web Application
 
-A **fully functional web application** for Privacy-Enhanced Federated Learning for Chronic Kidney Disease (CKD) Prediction.
+## Privacy-Enhanced Federated Learning for Chronic Kidney Disease
 
-This application transforms the terminal-based FL-DP pipeline into a modern, responsive web interface with role-based access control.
-
----
-
-## 🚀 Features
-
-### ✅ Backend (FastAPI)
-- **JWT-based Authentication** with role-based access control (Admin & Hospital users)
-- **RESTful API** with automatic documentation (Swagger/OpenAPI)
-- **SQLite Database** for user management, training logs, and predictions
-- **Integrated ML Services** - Wraps existing FL-DP scripts into API endpoints
-- **Differential Privacy** support for client training
-- **Federated Aggregation** (FedAvg) for global model updates
-
-### ✅ Frontend (HTML/CSS/JavaScript)
-- **Modern Dashboard UI** with clean, professional design
-- **Responsive Layout** - Works on desktop, tablet, and mobile
-- **Admin Dashboard** - Global model management, aggregation, and monitoring
-- **Hospital Dashboard** - Client training, dataset upload, and predictions
-- **Real-time Updates** with loading states and toast notifications
-- **Data Visualization** - Training metrics, model performance charts
-
-### ✅ Security
-- Password hashing with bcrypt
-- JWT token-based authentication
-- Role-based access control (RBAC)
-- Secure API endpoints
+A complete web-based federated learning system with differential privacy for collaborative CKD prediction across multiple hospitals without sharing raw patient data.
 
 ---
 
-## 📂 Project Structure
+## 🎯 System Overview
+
+### Architecture
+- **Backend**: FastAPI (Python)
+- **Database**: SQLite
+- **ML Framework**: PyTorch
+- **Privacy**: Differential Privacy (DP)
+- **Aggregation**: Federated Averaging (FedAvg)
+
+### Key Features
+✅ **Dual Authentication System**
+- Login Password (Dashboard Access)
+- Training Password (Model Training Authorization)
+
+✅ **Role-Based Access Control**
+- Admin: Global model management, client creation, aggregation
+- Client: Local training, predictions, visualization
+
+✅ **Privacy Preservation**
+- No raw data sharing
+- Differential Privacy on model weights
+- Gradient clipping and noise injection
+
+✅ **Dynamic Federated Learning**
+- Scalable to any number of clients
+- Automatic aggregation detection
+- Real-time status updates
+
+---
+
+## 📁 Project Structure
 
 ```
 App/
 ├── backend/
-│   ├── main.py              # FastAPI application entry point
-│   ├── auth_routes.py       # Authentication endpoints
-│   ├── client_routes.py     # Client management endpoints
-│   ├── admin_routes.py      # Admin endpoints (global model, aggregation)
-│   └── prediction_routes.py # Prediction endpoints
+│   ├── api/
+│   │   ├── admin_routes.py      # Admin API endpoints
+│   │   └── client_routes.py     # Client API endpoints
+│   ├── core/
+│   │   ├── auth.py              # Authentication & JWT
+│   │   └── database.py          # Database schema & operations
+│   ├── models/
+│   │   └── schemas.py           # Pydantic models
+│   ├── services/
+│   │   ├── fl_service.py        # Federated Learning logic
+│   │   └── email_service.py     # Email notifications
+│   └── main.py                  # FastAPI application
 ├── frontend/
-│   ├── index.html           # Main HTML file
-│   ├── styles.css           # Responsive CSS styles
-│   └── app.js               # JavaScript for API integration
-├── database/
-│   ├── models.py            # SQLAlchemy database models
-│   └── database.py          # Database connection and session management
-├── services/
-│   └── ml_service.py        # ML operations service (wraps FL-DP scripts)
-├── models/
-│   └── schemas.py           # Pydantic schemas for request/response validation
-├── utils/
-│   └── auth.py              # Authentication utilities (JWT, password hashing)
-├── configs/
-│   └── config.py            # Application configuration
-├── docker/
-│   ├── Dockerfile           # Docker image configuration
-│   └── docker-compose.yml   # Docker Compose configuration
-├── requirements.txt         # Python dependencies
-└── README.md               # This file
+│   ├── static/                  # CSS, JS, images
+│   └── templates/               # HTML templates
+├── models/                      # Saved models
+├── uploads/                     # Client datasets
+├── requirements.txt
+├── run.sh                       # Startup script
+└── README.md
 ```
 
 ---
 
-## 🛠️ Installation & Setup
+## 🚀 Installation & Setup
 
 ### Prerequisites
-- Python 3.9+
+- Python 3.11 (required)
 - pip
-- (Optional) Docker & Docker Compose
+- Virtual environment (recommended)
 
-### Method 1: Local Installation
+### Step 1: Create Virtual Environment
 
-1. **Navigate to the project directory:**
-   ```bash
-   cd Major-Project-PE-FL-DP-CKD-main
-   ```
+```bash
+cd App
+python3.11 -m venv venv
+```
 
-2. **Install dependencies:**
-   ```bash
-   pip install -r App/requirements.txt
-   ```
+Activate the virtual environment:
 
-3. **Run the application:**
-   ```bash
-   python -m uvicorn App.backend.main:app --reload --host 0.0.0.0 --port 8000
-   ```
+**Linux/Mac:**
+```bash
+source venv/bin/activate
+```
 
-4. **Access the application:**
-   - Frontend: http://localhost:8000
-   - API Documentation: http://localhost:8000/api/docs
-   - Alternative API Docs: http://localhost:8000/api/redoc
+**Windows:**
+```bash
+venv\Scripts\activate
+```
 
-### Method 2: Docker Installation
+### Step 2: Install Dependencies
 
-1. **Navigate to docker directory:**
-   ```bash
-   cd App/docker
-   ```
+```bash
+pip install -r requirements.txt
+```
 
-2. **Build and run with Docker Compose:**
-   ```bash
-   docker-compose up --build
-   ```
+### Step 3: Initialize Database
 
-3. **Access the application:**
-   - Frontend: http://localhost:8000
-   - API Documentation: http://localhost:8000/api/docs
+```bash
+python3.11 -c "from App.backend.core.database import init_database; init_database()"
+```
 
----
+### Step 4: Start Server
 
-## 🔐 Default Credentials
+```bash
+./run.sh
+```
 
-### Admin Account
-- **Username:** `admin`
-- **Password:** `admin123`
-- **Role:** Administrator (full access)
+Or manually:
 
-### Creating Hospital Users
-1. Login as admin
-2. Or use the registration endpoint via API docs
+```bash
+python3.11 -m uvicorn App.backend.main:app --host 0.0.0.0 --port 8000 --reload
+```
 
 ---
 
-## 📖 User Guide
+## 🌐 Access Points
 
-### For Admin Users
-
-#### 1. Initialize Global Model
-- Navigate to **Global Model** page
-- Set training parameters (epochs, batch size, learning rate)
-- Click **Initialize Global Model**
-- Wait for training to complete
-- View metrics and visualizations
-
-#### 2. Manage Clients (Hospitals)
-- Navigate to **Clients** page
-- Click **Add Client** to create new hospital client
-- Upload datasets for each client
-- Monitor client status and activity
-
-#### 3. Perform Federated Aggregation
-- Navigate to **Aggregation** page
-- Select clients to aggregate (must have trained models)
-- Click **Perform Aggregation**
-- View updated global model metrics
-- Check client statistics
-
-#### 4. Monitor Dashboard
-- View overall statistics
-- Track training progress
-- Monitor predictions
-- View recent activity
-
-### For Hospital Users
-
-#### 1. Upload Dataset
-- Navigate to **Clients** page
-- Click **Upload** button for your client
-- Select CSV file with patient data
-- Confirm upload success
-
-#### 2. Train Local Model
-- Navigate to **Training** page
-- Select your client
-- Configure training parameters
-- Click **Start Training**
-- View training results and metrics
-
-#### 3. Make Predictions
-- Navigate to **Predictions** page
-- Select your client
-- Enter patient data
-- Click **Predict**
-- View prediction result (CKD: YES/NO)
-- Check prediction probability
-
-#### 4. View History
-- Check training history
-- Review past predictions
-- Monitor model performance
+- **Landing Page**: http://localhost:8000
+- **Admin Dashboard**: http://localhost:8000/admin
+- **Client Dashboard**: http://localhost:8000/client
+- **API Documentation**: http://localhost:8000/docs
+- **Health Check**: http://localhost:8000/health
 
 ---
 
-## 🔌 API Endpoints
+## 👑 Admin Workflow
+
+### 1. Login
+- **Default Credentials**:
+  - Username: `admin`
+  - Password: `admin123`
+
+### 2. Initialize Global Model
+```
+POST /api/admin/initialize-global-model
+```
+- Trains initial global model
+- Required before clients can train
+
+### 3. Create Clients
+```
+POST /api/admin/clients
+```
+**Required Fields**:
+- Client Name
+- Email
+- Login Password
+- Training Password
+- Description (optional)
+
+**Email Notification**: Credentials sent automatically
+
+### 4. Monitor Clients
+```
+GET /api/admin/clients
+GET /api/admin/clients-metrics
+GET /api/admin/dashboard/stats
+```
+
+### 5. Perform Aggregation
+```
+POST /api/admin/aggregate
+```
+- Automatically detects clients with "New Update Available"
+- Performs FedAvg aggregation
+- Updates global model
+- Distributes to all clients
+
+---
+
+## 🏥 Client Workflow
+
+### 1. Login
+- Use credentials received via email
+- Client Name + Login Password
+
+### 2. Upload Dataset
+```
+POST /api/client/upload-dataset
+```
+- Upload CSV file with patient data
+- Must match template schema
+
+### 3. Train Local Model
+```
+POST /api/client/train
+```
+
+**Required**:
+- Training Password (for authorization)
+
+**Configuration**:
+- Epochs (1-100)
+- Batch Size (8-256)
+- Learning Rate (0.0001-0.1)
+- Noise Multiplier (0.1-10.0) - DP parameter
+- Max Gradient Norm (0.1-10.0) - DP parameter
+
+**Process**:
+1. Loads global model as starting point
+2. Trains on local dataset
+3. Applies Differential Privacy:
+   - Gradient clipping
+   - Gaussian noise injection
+4. Sends only weight updates (delta) to server
+5. Status changes to "New Update Available"
+
+### 4. Make Predictions
+```
+POST /api/client/predict              # Single prediction
+POST /api/client/predict-batch        # Batch predictions
+GET /api/client/download-predictions  # Download results
+```
+
+### 5. View History
+```
+GET /api/client/training-history
+GET /api/client/prediction-history
+```
+
+---
+
+## 🔐 Security Features
 
 ### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login and get JWT token
-- `GET /api/auth/me` - Get current user info
-- `GET /api/auth/users` - List all users (admin only)
+- JWT-based token authentication
+- Dual password system (login + training)
+- Password hashing (SHA-256)
+- Token expiration (8 hours)
 
-### Clients
-- `POST /api/clients/` - Create new client
-- `GET /api/clients/` - List all clients
-- `GET /api/clients/{id}` - Get client details
-- `POST /api/clients/{id}/upload-dataset` - Upload dataset
-- `POST /api/clients/{id}/train` - Train client model
-- `GET /api/clients/{id}/training-history` - Get training history
+### Privacy Protection
+- **Differential Privacy**:
+  - Gradient clipping: Limits gradient magnitude
+  - Noise injection: Adds calibrated Gaussian noise
+  - Configurable privacy budget
 
-### Admin
-- `POST /api/admin/init-global-model` - Initialize global model
-- `POST /api/admin/aggregate` - Perform federated aggregation
-- `GET /api/admin/dashboard-stats` - Get dashboard statistics
-- `GET /api/admin/client-stats` - Get client statistics
-- `GET /api/admin/global-models` - List global model versions
-- `GET /api/admin/training-logs` - Get all training logs
+- **Data Isolation**:
+  - Each client has separate directory
+  - No cross-client data access
+  - Only model weights shared
 
-### Predictions
-- `POST /api/predictions/` - Make prediction
-- `GET /api/predictions/` - Get prediction history
-- `GET /api/predictions/{id}` - Get specific prediction
-
----
-
-## 🔄 Complete Workflow
-
-### Initial Setup (Admin)
-1. Login as admin
-2. Initialize global model
-3. Create hospital clients
-4. Distribute global model to clients (automatic)
-
-### Hospital Training
-1. Hospital users login
-2. Upload their local datasets
-3. Train local models with differential privacy
-4. Models automatically generate deltas for aggregation
-
-### Federated Aggregation (Admin)
-1. Admin selects trained clients
-2. Performs federated aggregation (FedAvg)
-3. Updated global model distributed to all clients
-4. Process repeats for multiple rounds
-
-### Making Predictions
-1. Hospital users can make predictions anytime
-2. Uses latest available model
-3. Results stored in database
-4. Privacy-preserved throughout
-
----
-
-## 🎨 UI Features
-
-- **Clean Dashboard Design** - Modern, professional interface
-- **Responsive Layout** - Works on all screen sizes
-- **Real-time Feedback** - Loading states, progress indicators
-- **Toast Notifications** - Success/error messages
-- **Data Tables** - Sortable, searchable tables
-- **Form Validation** - Client-side and server-side validation
-- **Role-based UI** - Admin-only sections hidden for regular users
-
----
-
-## 🔧 Configuration
-
-Edit `App/configs/config.py` to customize:
-
-```python
-# Security
-SECRET_KEY = "your-secret-key-here"
-ACCESS_TOKEN_EXPIRE_MINUTES = 1440  # 24 hours
-
-# Database
-DATABASE_URL = "sqlite:///./App/database/app.db"
-
-# CORS
-CORS_ORIGINS = ["http://localhost:3000", "http://localhost:8000"]
-
-# Training defaults
-DEFAULT_EPOCHS = 30
-DEFAULT_BATCH_SIZE = 64
-DEFAULT_LEARNING_RATE = 0.001
-```
+### Audit Logging
+- All actions logged with timestamps
+- User identification
+- IP address tracking (optional)
 
 ---
 
 ## 📊 Database Schema
 
-### Users
-- id, username, email, hashed_password, full_name, role, is_active, created_at
+### Tables
+1. **admin** - Admin users
+2. **clients** - Hospital/client information
+3. **training_logs** - Training history per client
+4. **global_model** - Global model versions
+5. **local_models** - Client local models
+6. **predictions** - Prediction records
+7. **aggregation_logs** - Aggregation history
+8. **email_notifications** - Email log
+9. **audit_logs** - System audit trail
+10. **client_datasets** - Dataset metadata
 
-### Clients
-- id, user_id, client_name, client_dir, dataset_path, is_active, created_at
+---
 
-### TrainingLogs
-- id, user_id, client_id, training_type, status, accuracy, f1_score, auc, epochs, started_at, completed_at
+## 📧 Email Notifications
 
-### Predictions
-- id, user_id, client_id, patient_data, prediction_class, prediction_label, prediction_probability, created_at
+### Configuration
+Update in `App/backend/services/email_service.py`:
 
-### GlobalModels
-- id, round_number, model_path, accuracy, f1_score, auc, num_clients, is_current, created_at
+```python
+SMTP_SERVER = "smtp.gmail.com"
+SMTP_PORT = 587
+SMTP_USERNAME = "your-email@gmail.com"
+SMTP_PASSWORD = "your-app-password"
+```
+
+### Notification Types
+1. **Client Created** - Credentials sent to new client
+2. **Training Started** - Confirmation to client
+3. **Training Complete** - Notification to admin
+4. **Aggregation Complete** - Notification to all clients
+
+---
+
+## 🔄 Federated Learning Flow
+
+```
+1. Admin initializes global model
+   ↓
+2. Admin creates clients
+   ↓
+3. Clients upload datasets
+   ↓
+4. Clients train local models (with DP)
+   ↓
+5. Clients send weight updates to server
+   ↓
+6. Admin performs aggregation (FedAvg)
+   ↓
+7. Updated global model distributed to clients
+   ↓
+8. Clients use global model for predictions
+   ↓
+9. Repeat from step 4 for next round
+```
+
+---
+
+## 🎨 API Endpoints
+
+### Admin Endpoints
+- `POST /api/admin/login` - Admin login
+- `POST /api/admin/clients` - Create client
+- `GET /api/admin/clients` - List all clients
+- `GET /api/admin/clients/{id}` - Get client details
+- `GET /api/admin/clients-metrics` - Client metrics
+- `POST /api/admin/initialize-global-model` - Initialize model
+- `POST /api/admin/aggregate` - Perform aggregation
+- `GET /api/admin/global-metrics` - Global model metrics
+- `GET /api/admin/dashboard/stats` - Dashboard statistics
+- `DELETE /api/admin/clients/{id}` - Deactivate client
+
+### Client Endpoints
+- `POST /api/client/login` - Client login
+- `POST /api/client/upload-dataset` - Upload dataset
+- `POST /api/client/train` - Train local model
+- `POST /api/client/predict` - Single prediction
+- `POST /api/client/predict-batch` - Batch predictions
+- `GET /api/client/download-predictions/{filename}` - Download results
+- `GET /api/client/training-history` - Training history
+- `GET /api/client/prediction-history` - Prediction history
+- `GET /api/client/dashboard/stats` - Dashboard statistics
+
+---
+
+## 🧪 Testing
+
+### Test Admin Login
+```bash
+curl -X POST http://localhost:8000/api/admin/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"admin123"}'
+```
+
+### Test Health Check
+```bash
+curl http://localhost:8000/health
+```
+
+---
+
+## 📝 Configuration
+
+### Differential Privacy Parameters
+
+**Noise Multiplier** (σ):
+- Higher = More privacy, less accuracy
+- Recommended: 0.5 - 2.0
+- Default: 1.0
+
+**Max Gradient Norm** (C):
+- Gradient clipping threshold
+- Recommended: 0.5 - 2.0
+- Default: 1.0
+
+**Privacy Budget** (ε):
+- Calculated based on σ, C, and training iterations
+- Lower ε = Better privacy
 
 ---
 
 ## 🐛 Troubleshooting
 
-### Issue: Import errors
-**Solution:** Ensure you're running from the project root directory and all dependencies are installed.
-
-### Issue: Database not found
-**Solution:** The database is created automatically on first run. Ensure write permissions in `App/database/` directory.
-
-### Issue: CORS errors
-**Solution:** Update `CORS_ORIGINS` in `App/configs/config.py` to include your frontend URL.
-
-### Issue: Model training fails
-**Solution:** Ensure the template CSV file exists at `FL-DP-Healthcare/data/chronic_kidney_disease_5000.csv`
-
----
-
-## 🚀 Production Deployment
-
-### Security Checklist
-- [ ] Change default admin password
-- [ ] Update SECRET_KEY in config
-- [ ] Use environment variables for sensitive data
-- [ ] Enable HTTPS
-- [ ] Configure proper CORS origins
-- [ ] Set up database backups
-- [ ] Configure logging
-- [ ] Use production WSGI server (Gunicorn)
-
-### Recommended Production Setup
+### Database Issues
 ```bash
-# Install Gunicorn
-pip install gunicorn
+# Reinitialize database
+python3.11 -c "from App.backend.core.database import init_database; init_database()"
+```
 
-# Run with Gunicorn
-gunicorn App.backend.main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
+### Port Already in Use
+```bash
+# Kill process on port 8000
+lsof -ti:8000 | xargs kill -9
+```
+
+### Import Errors
+```bash
+# Ensure you're in the correct directory
+cd /path/to/Major-Project-PE-FL-DP-CKD-main
+export PYTHONPATH="${PYTHONPATH}:$(pwd)"
 ```
 
 ---
 
-## 📝 Notes
+## 📚 References
 
-- The application integrates seamlessly with existing FL-DP-Healthcare scripts
-- All ML operations use differential privacy for client training
-- Visualizations (confusion matrix, ROC curves, calibration plots) are generated automatically
-- The frontend is a single-page application (SPA) with no build step required
-- Database migrations are handled automatically by SQLAlchemy
+- **Federated Learning**: McMahan et al., 2017
+- **Differential Privacy**: Dwork & Roth, 2014
+- **FastAPI**: https://fastapi.tiangolo.com/
+- **PyTorch**: https://pytorch.org/
 
 ---
 
@@ -355,8 +412,8 @@ gunicorn App.backend.main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0
 3. Muskan
 4. Adaline
 
-**Mentor:** Mr. Pawan Hegde  
-**Department:** CSE, NMAM Institute Of Technology, Nitte
+**Mentor**: Mr. Pawan Hegde  
+**Institution**: CSE, NMAM Institute Of Technology, Nitte
 
 ---
 
@@ -366,13 +423,13 @@ This project is for academic purposes.
 
 ---
 
-## 🙏 Acknowledgments
+## 🆘 Support
 
-- FastAPI for the excellent web framework
-- PyTorch for deep learning capabilities
-- Scikit-learn for ML utilities
-- The open-source community
+For issues or questions:
+1. Check API documentation: http://localhost:8000/docs
+2. Review logs in terminal
+3. Check database: `federated_ckd.db`
 
 ---
 
-**For any issues or questions, please refer to the API documentation at `/api/docs` or contact the development team.**
+**Built with ❤️ for Privacy-Preserving Healthcare AI**

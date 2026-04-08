@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Dashboard - Federated Learning CKD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        /* Login Page */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem;
+        }
+
+        .login-box {
+            background: #ffffff;
+            padding: 3rem;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .login-box h1 {
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+            font-weight: 800;
+            text-align: center;
+        }
+
+        .login-box .subtitle {
+            color: #64748b;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #334155;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            font-family: inherit;
+            background: #ffffff;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #ec4899;
+            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.875rem;
+            background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(236, 72, 153, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message,
+        .success-message,
+        .info-message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: none;
+            font-size: 0.9rem;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .success-message {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .info-message {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 1.5rem;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            text-align: center;
+            width: 100%;
+        }
+
+        .back-link:hover {
+            color: #764ba2;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: none;
+        }
+
+        .navbar {
+            background: #ffffff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-name {
+            color: #64748b;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .btn-logout {
+            padding: 0.5rem 1rem;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #64748b;
+            font-size: 1rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transform: translateY(-4px);
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .stat-card:nth-child(1) .stat-value {
+            background: linear-gradient(135deg, #ec4899, #f43f5e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-card:nth-child(2) .stat-value {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-card:nth-child(3) .stat-value {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-card:nth-child(4) .stat-value {
+            background: linear-gradient(135deg, #10b981, #059669);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #e2e8f0;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: #64748b;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .tab:hover {
+            color: #ec4899;
+        }
+
+        .tab.active {
+            color: #ec4899;
+            border-bottom-color: #ec4899;
+        }
+
+        .tab-content {
+            display: none;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .btn-primary {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(236, 72, 153, 0.3);
+        }
+
+        .btn-secondary {
+            padding: 0.5rem 1rem;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        /* File Upload */
+        .file-upload {
+            border: 2px dashed #cbd5e1;
+            padding: 3rem;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f8fafc;
+        }
+
+        .file-upload:hover {
+            background: #f1f5f9;
+            border-color: #ec4899;
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        .file-upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .file-upload-text {
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .file-upload-hint {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Form Styles */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 0.25rem;
+            color: #64748b;
+            font-size: 0.8rem;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th {
+            background: #f8fafc;
+            padding: 1rem;
+            text-align: left;
+            color: #475569;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        table td {
+            padding: 1rem;
+            border-bottom: 1px solid #f1f5f9;
+            color: #64748b;
+        }
+
+        table tr:hover {
+            background: #f8fafc;
+        }
+
+        /* Badge */
+        .badge {
+            padding: 0.375rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #64748b;
+        }
+
+        .spinner {
+            border: 3px solid #f1f5f9;
+            border-top: 3px solid #ec4899;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Prediction Result */
+        .prediction-result {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1.5rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .prediction-result h3 {
+            color: #0f172a;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .prediction-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .prediction-item:last-child {
+            border-bottom: none;
+        }
+
+        .prediction-label {
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .prediction-value {
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        /* Alert Box */
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            border-color: #f59e0b;
+            color: #92400e;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .nav-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .tabs {
+                overflow-x: auto;
+            }
+
+            .tab {
+                white-space: nowrap;
+            }
+
+            table {
+                font-size: 0.875rem;
+            }
+
+            table th,
+            table td {
+                padding: 0.75rem 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-box {
+                padding: 2rem 1.5rem;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+
+            .file-upload {
+                padding: 2rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container">
+        <div class="login-box">
+            <h1>🏥 Client Login</h1>
+            <p class="subtitle">Federated Learning CKD System</p>
+            
+            <div id="loginError" class="error-message"></div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="client_name">Client Name</label>
+                    <input type="text" id="client_name" name="client_name" required placeholder="Enter your client name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Login Password</label>
+                    <input type="password" id="password" name="password" required placeholder="Enter your password">
+                </div>
+                
+                <button type="submit" class="btn" id="loginBtn">Login</button>
+            </form>
+            
+            <a href="/" class="back-link">← Back to Home</a>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-content">
+                <div class="nav-brand">Client Dashboard</div>
+                <div class="nav-user">
+                    <span class="user-name" id="userName">Client</span>
+                    <button class="btn-logout" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container">
+            <div class="page-header">
+                <h1 class="page-title">Welcome Back!</h1>
+                <p class="page-subtitle">Manage your federated learning participation and make CKD predictions</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Trainings</div>
+                    <div class="stat-value" id="totalTrainings">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Current Accuracy</div>
+                    <div class="stat-value" id="currentAccuracy">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Dataset Size</div>
+                    <div class="stat-value" id="datasetSize">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Predictions</div>
+                    <div class="stat-value" id="totalPredictions">-</div>
+                </div>
+            </div>
+
+            <!-- Update Status Alert -->
+            <div id="updateStatus" class="alert alert-warning" style="display: none;">
+                <strong>Status:</strong> <span id="updateStatusText"></span>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('dataset')">Dataset</button>
+                <button class="tab" onclick="switchTab('training')">Training</button>
+                <button class="tab" onclick="switchTab('prediction')">Prediction</button>
+                <button class="tab" onclick="switchTab('history')">History</button>
+            </div>
+
+            <!-- Dataset Tab -->
+            <div id="datasetTab" class="tab-content active">
+                <div class="section-header">
+                    <h2 class="section-title">Dataset Management</h2>
+                </div>
+                <div class="info-message" style="display: block;">
+                    Upload your private dataset (CSV format). This data will never leave your system.
+                </div>
+                <div class="file-upload" onclick="document.getElementById('datasetFile').click()">
+                    <input type="file" id="datasetFile" accept=".csv" onchange="uploadDataset()">
+                    <div class="file-upload-icon">📁</div>
+                    <p class="file-upload-text">Click to browse or drag and drop</p>
+                    <p class="file-upload-hint">CSV files only</p>
+                </div>
+                <div id="uploadResult"></div>
+            </div>
+
+            <!-- Training Tab -->
+            <div id="trainingTab" class="tab-content">
+                <div class="section-header">
+                    <h2 class="section-title">Model Training</h2>
+                </div>
+                <div class="info-message" style="display: block;">
+                    Train your local model with Differential Privacy. Only encrypted weight updates will be shared.
+                </div>
+                <form id="trainingForm">
+                    <div class="form-group">
+                        <label>Training Password *</label>
+                        <input type="password" name="training_password" required placeholder="Enter training password">
+                        <small>Required for authorization</small>
+                    </div>
+                    
+                    <h3 style="margin: 1.5rem 0 1rem; color: #0f172a; font-size: 1.1rem;">Training Configuration</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Epochs</label>
+                            <input type="number" name="epochs" value="10" min="1" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Batch Size</label>
+                            <input type="number" name="batch_size" value="32" min="8" max="256">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Learning Rate</label>
+                        <input type="number" name="learning_rate" value="0.001" step="0.0001" min="0.0001" max="0.1">
+                    </div>
+                    
+                    <h3 style="margin: 1.5rem 0 1rem; color: #0f172a; font-size: 1.1rem;">Differential Privacy Settings</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Noise Multiplier</label>
+                            <input type="number" name="noise_multiplier" value="1.0" step="0.1" min="0.1" max="10.0">
+                            <small>Higher = More privacy</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Max Gradient Norm</label>
+                            <input type="number" name="max_grad_norm" value="1.0" step="0.1" min="0.1" max="10.0">
+                            <small>Gradient clipping threshold</small>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn" id="trainBtn">Start Training</button>
+                </form>
+                <div id="trainingResult"></div>
+            </div>
+
+            <!-- Prediction Tab -->
+            <div id="predictionTab" class="tab-content">
+                <div class="section-header">
+                    <h2 class="section-title">CKD Prediction</h2>
+                </div>
+                
+                <div class="tabs" style="margin-bottom: 1.5rem; border-bottom: none;">
+                    <button class="tab active" onclick="switchPredictionMode('single')">Single Prediction</button>
+                    <button class="tab" onclick="switchPredictionMode('batch')">Batch Prediction</button>
+                </div>
+
+                <!-- Single Prediction -->
+                <div id="singlePrediction">
+                    <form id="predictionForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Age</label>
+                                <input type="number" name="age" required placeholder="e.g., 45">
+                            </div>
+                            <div class="form-group">
+                                <label>Blood Pressure</label>
+                                <input type="number" name="bp" required placeholder="e.g., 80">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Specific Gravity</label>
+                                <input type="number" name="sg" step="0.001" required placeholder="e.g., 1.020">
+                            </div>
+                            <div class="form-group">
+                                <label>Albumin</label>
+                                <input type="number" name="al" required placeholder="e.g., 0">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Sugar</label>
+                                <input type="number" name="su" required placeholder="e.g., 0">
+                            </div>
+                            <div class="form-group">
+                                <label>Red Blood Cells</label>
+                                <select name="rbc" required>
+                                    <option value="">Select...</option>
+                                    <option value="0">Normal</option>
+                                    <option value="1">Abnormal</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Blood Glucose Random</label>
+                                <input type="number" name="bgr" required placeholder="e.g., 121">
+                            </div>
+                            <div class="form-group">
+                                <label>Blood Urea</label>
+                                <input type="number" name="bu" required placeholder="e.g., 36">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Serum Creatinine</label>
+                                <input type="number" name="sc" step="0.1" required placeholder="e.g., 1.2">
+                            </div>
+                            <div class="form-group">
+                                <label>Sodium</label>
+                                <input type="number" name="sod" required placeholder="e.g., 137">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Potassium</label>
+                                <input type="number" name="pot" step="0.1" required placeholder="e.g., 4.6">
+                            </div>
+                            <div class="form-group">
+                                <label>Hemoglobin</label>
+                                <input type="number" name="hemo" step="0.1" required placeholder="e.g., 15.4">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn">Predict</button>
+                    </form>
+                    <div id="predictionResult"></div>
+                </div>
+
+                <!-- Batch Prediction -->
+                <div id="batchPrediction" style="display: none;">
+                    <div class="info-message" style="display: block;">
+                        Upload a CSV file with patient data for batch predictions.
+                    </div>
+                    <div class="file-upload" onclick="document.getElementById('batchFile').click()">
+                        <input type="file" id="batchFile" accept=".csv" onchange="uploadBatchPrediction()">
+                        <div class="file-upload-icon">📊</div>
+                        <p class="file-upload-text">Click to upload batch prediction file</p>
+                        <p class="file-upload-hint">CSV files only</p>
+                    </div>
+                    <div id="batchResult"></div>
+                </div>
+            </div>
+
+            <!-- History Tab -->
+            <div id="historyTab" class="tab-content">
+                <div class="section-header">
+                    <h2 class="section-title">Training & Prediction History</h2>
+                </div>
+                
+                <h3 style="margin-bottom: 1rem; color: #0f172a; font-size: 1.1rem;">Training History</h3>
+                <div id="trainingHistory"></div>
+                
+                <h3 style="margin: 2rem 0 1rem; color: #0f172a; font-size: 1.1rem;">Recent Predictions</h3>
+                <div id="predictionHistory"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let token = localStorage.getItem('client_token');
+        let userName = localStorage.getItem('client_name');
+
+        // Check if already logged in
+        if (token) {
+            showDashboard();
+        }
+
+        // Login Form
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('loginBtn');
+            btn.disabled = true;
+            btn.textContent = 'Logging in...';
+
+            const formData = {
+                client_name: document.getElementById('client_name').value,
+                password: document.getElementById('password').value
+            };
+
+            try {
+                const response = await fetch('/api/client/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem('client_token', data.access_token);
+                    localStorage.setItem('client_name', data.user_name);
+                    token = data.access_token;
+                    userName = data.user_name;
+                    showDashboard();
+                } else {
+                    showError('loginError', data.detail || 'Login failed');
+                }
+            } catch (error) {
+                showError('loginError', 'Network error. Please try again.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Login';
+            }
+        });
+
+        function showDashboard() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('userName').textContent = userName || 'Client';
+            loadDashboardData();
+        }
+
+        function logout() {
+            localStorage.removeItem('client_token');
+            localStorage.removeItem('client_name');
+            location.reload();
+        }
+
+        async function loadDashboardData() {
+            await Promise.all([
+                loadStats(),
+                loadTrainingHistory(),
+                loadPredictionHistory()
+            ]);
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/client/dashboard/stats', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                document.getElementById('totalTrainings').textContent = data.total_trainings;
+                document.getElementById('currentAccuracy').textContent = 
+                    data.current_accuracy ? (data.current_accuracy * 100).toFixed(1) + '%' : 'N/A';
+                document.getElementById('datasetSize').textContent = data.dataset_size || 'N/A';
+                document.getElementById('totalPredictions').textContent = data.total_predictions;
+
+                // Show update status
+                if (data.update_status) {
+                    document.getElementById('updateStatus').style.display = 'block';
+                    document.getElementById('updateStatusText').textContent = data.update_status;
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tabs > .tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tab + 'Tab').classList.add('active');
+        }
+
+        function switchPredictionMode(mode) {
+            const tabs = document.querySelectorAll('#predictionTab .tabs .tab');
+            tabs.forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (mode === 'single') {
+                document.getElementById('singlePrediction').style.display = 'block';
+                document.getElementById('batchPrediction').style.display = 'none';
+            } else {
+                document.getElementById('singlePrediction').style.display = 'none';
+                document.getElementById('batchPrediction').style.display = 'block';
+            }
+        }
+
+        async function uploadDataset() {
+            const file = document.getElementById('datasetFile').files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const resultDiv = document.getElementById('uploadResult');
+            resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div>Uploading dataset...</div>';
+
+            try {
+                const response = await fetch('/api/client/upload-dataset', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="success-message" style="display: block; margin-top: 1.5rem;">
+                            Dataset uploaded successfully!<br>
+                            Samples: ${data.num_samples}<br>
+                            Size: ${(data.file_size / 1024).toFixed(2)} KB
+                        </div>
+                    `;
+                    loadStats();
+                } else {
+                    resultDiv.innerHTML = `<div class="error-message" style="display: block; margin-top: 1.5rem;">${data.detail}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="error-message" style="display: block; margin-top: 1.5rem;">Upload failed. Please try again.</div>';
+            }
+        }
+
+        document.getElementById('trainingForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('trainBtn');
+            btn.disabled = true;
+            btn.textContent = 'Training...';
+
+            const formData = new FormData(e.target);
+            const resultDiv = document.getElementById('trainingResult');
+            resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div>Training in progress... This may take a few minutes.</div>';
+
+            try {
+                const response = await fetch('/api/client/train', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    const metrics = data.metrics || {};
+                    resultDiv.innerHTML = `
+                        <div class="success-message" style="display: block; margin-top: 1.5rem;">
+                            Training completed successfully!<br>
+                            Accuracy: ${metrics.accuracy ? (metrics.accuracy * 100).toFixed(2) + '%' : 'N/A'}<br>
+                            Loss: ${metrics.loss ? metrics.loss.toFixed(4) : 'N/A'}
+                        </div>
+                    `;
+                    loadStats();
+                    loadTrainingHistory();
+                } else {
+                    resultDiv.innerHTML = `<div class="error-message" style="display: block; margin-top: 1.5rem;">${data.detail}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="error-message" style="display: block; margin-top: 1.5rem;">Training failed. Please try again.</div>';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Start Training';
+            }
+        });
+
+        document.getElementById('predictionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const patientData = Object.fromEntries(formData);
+
+            const resultDiv = document.getElementById('predictionResult');
+            resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div>Making prediction...</div>';
+
+            try {
+                const response = await fetch('/api/client/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ patient_data: patientData })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    const predictionClass = data.prediction === 'ckd' ? 'CKD Detected' : 'No CKD';
+                    const badgeClass = data.prediction === 'ckd' ? 'badge-danger' : 'badge-success';
+                    
+                    resultDiv.innerHTML = `
+                        <div class="prediction-result">
+                            <h3>Prediction Result</h3>
+                            <div class="prediction-item">
+                                <span class="prediction-label">Diagnosis:</span>
+                                <span class="badge ${badgeClass}">${predictionClass}</span>
+                            </div>
+                            <div class="prediction-item">
+                                <span class="prediction-label">Confidence:</span>
+                                <span class="prediction-value">${(data.confidence * 100).toFixed(2)}%</span>
+                            </div>
+                            <div class="prediction-item">
+                                <span class="prediction-label">Timestamp:</span>
+                                <span class="prediction-value">${new Date(data.timestamp).toLocaleString()}</span>
+                            </div>
+                        </div>
+                    `;
+                    loadStats();
+                    loadPredictionHistory();
+                } else {
+                    resultDiv.innerHTML = `<div class="error-message" style="display: block; margin-top: 1.5rem;">${data.detail}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="error-message" style="display: block; margin-top: 1.5rem;">Prediction failed. Please try again.</div>';
+            }
+        });
+
+        async function uploadBatchPrediction() {
+            const file = document.getElementById('batchFile').files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const resultDiv = document.getElementById('batchResult');
+            resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div>Processing batch predictions...</div>';
+
+            try {
+                const response = await fetch('/api/client/predict-batch', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="success-message" style="display: block; margin-top: 1.5rem;">
+                            Batch prediction completed!<br>
+                            Total predictions: ${data.total_predictions}<br>
+                            <a href="${data.download_url}" class="btn-primary" style="display: inline-block; margin-top: 1rem; text-decoration: none;">Download Results</a>
+                        </div>
+                    `;
+                    loadStats();
+                } else {
+                    resultDiv.innerHTML = `<div class="error-message" style="display: block; margin-top: 1.5rem;">${data.detail}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="error-message" style="display: block; margin-top: 1.5rem;">Batch prediction failed. Please try again.</div>';
+            }
+        }
+
+        async function loadTrainingHistory() {
+            try {
+                const response = await fetch('/api/client/training-history', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const history = await response.json();
+
+                if (history.length === 0) {
+                    document.getElementById('trainingHistory').innerHTML = '<p style="color: #64748b;">No training history yet.</p>';
+                    return;
+                }
+
+                const html = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Round</th>
+                                <th>Accuracy</th>
+                                <th>Loss</th>
+                                <th>Epochs</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${history.slice(0, 10).map(item => `
+                                <tr>
+                                    <td>${item.round_number}</td>
+                                    <td>${(item.accuracy * 100).toFixed(2)}%</td>
+                                    <td>${item.loss.toFixed(4)}</td>
+                                    <td>${item.epochs}</td>
+                                    <td>${new Date(item.completed_at).toLocaleString()}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                document.getElementById('trainingHistory').innerHTML = html;
+            } catch (error) {
+                console.error('Error loading training history:', error);
+            }
+        }
+
+        async function loadPredictionHistory() {
+            try {
+                const response = await fetch('/api/client/prediction-history?limit=10', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const history = await response.json();
+
+                if (history.length === 0) {
+                    document.getElementById('predictionHistory').innerHTML = '<p style="color: #64748b;">No predictions yet.</p>';
+                    return;
+                }
+
+                const html = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Prediction</th>
+                                <th>Confidence</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${history.map(item => `
+                                <tr>
+                                    <td><span class="badge ${item.prediction === 'ckd' ? 'badge-danger' : 'badge-success'}">${item.prediction === 'ckd' ? 'CKD' : 'No CKD'}</span></td>
+                                    <td>${(item.confidence * 100).toFixed(2)}%</td>
+                                    <td>${new Date(item.timestamp).toLocaleString()}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                document.getElementById('predictionHistory').innerHTML = html;
+            } catch (error) {
+                console.error('Error loading prediction history:', error);
+            }
+        }
+
+        function showError(elementId, message) {
+            const el = document.getElementById(elementId);
+            el.textContent = message;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 5000);
+        }
+    </script>
+</body>
+</html>

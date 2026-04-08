@@ -1,0 +1,1729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Dashboard - Federated Learning CKD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        /* Login Page */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem;
+        }
+
+        .login-box {
+            background: #ffffff;
+            padding: 3rem;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .login-box h1 {
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+            font-weight: 800;
+            text-align: center;
+        }
+
+        .login-box .subtitle {
+            color: #64748b;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #334155;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            font-family: inherit;
+            background: #ffffff;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #ec4899;
+            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.875rem;
+            background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(236, 72, 153, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .back-to-home {
+            display: block;
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .back-to-home:hover {
+            color: #ec4899;
+        }
+
+        .back-to-home::before {
+            content: "← ";
+            margin-right: 0.25rem;
+        }
+
+        .error-message,
+        .success-message,
+        .info-message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: none;
+            font-size: 0.9rem;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .success-message {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .info-message {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: none;
+        }
+
+        /* Top Navigation Bar */
+        .navbar {
+            background: #ffffff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .nav-btn {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            color: #64748b;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+            color: white;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-name {
+            color: #64748b;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .btn-logout {
+            padding: 0.5rem 1rem;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+        }
+
+        /* Notification Styles */
+        .notification-container {
+            position: relative;
+        }
+
+        .notification-btn {
+            position: relative;
+            padding: 0.5rem 1rem;
+            background: #f1f5f9;
+            color: #0f172a;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .notification-btn:hover {
+            background: #e2e8f0;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            border-radius: 10px;
+            padding: 0.125rem 0.375rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        .notification-badge:empty {
+            display: none;
+        }
+
+        .notification-dropdown {
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            width: 400px;
+            max-height: 500px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .notification-dropdown.show {
+            display: flex;
+        }
+
+        .notification-header {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notification-header h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        .mark-all-read-btn {
+            padding: 0.25rem 0.75rem;
+            background: transparent;
+            color: #ec4899;
+            border: 1px solid #ec4899;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .mark-all-read-btn:hover {
+            background: #ec4899;
+            color: white;
+        }
+
+        .notification-list {
+            overflow-y: auto;
+            max-height: 400px;
+        }
+
+        .notification-item {
+            padding: 1rem;
+            border-bottom: 1px solid #f1f5f9;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .notification-item:hover {
+            background: #f8fafc;
+        }
+
+        .notification-item.unread {
+            background: #fef2f2;
+        }
+
+        .notification-item.unread:hover {
+            background: #fee2e2;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+        }
+
+        .notification-message {
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .notification-time {
+            color: #94a3b8;
+            font-size: 0.75rem;
+        }
+
+        .empty-notifications {
+            padding: 2rem;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #64748b;
+            font-size: 1rem;
+        }
+
+        /* Card Styles */
+        .card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transform: translateY(-4px);
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .slider-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            color: #334155;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .slider-value {
+            color: #ec4899;
+            font-weight: 700;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e2e8f0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+            cursor: pointer;
+            border: none;
+        }
+
+        .file-upload {
+            border: 2px dashed #e2e8f0;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 1.5rem;
+        }
+
+        .file-upload:hover {
+            border-color: #ec4899;
+            background: #fdf2f8;
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        .file-upload-label {
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .file-name {
+            margin-top: 0.5rem;
+            color: #ec4899;
+            font-weight: 600;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            display: none;
+            margin-top: 1.5rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e2e8f0;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+            width: 0%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .progress-status {
+            margin-top: 0.5rem;
+            color: #64748b;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        /* Table Styles */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #64748b;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            color: #334155;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        /* Prediction Form */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            width: auto;
+        }
+
+        .btn-icon {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #64748b;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-left {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Container -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-box">
+            <h1>Client Login</h1>
+            <p class="subtitle">Federated Learning CKD System</p>
+            
+            <div id="loginError" class="error-message"></div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="clientName">Client Name</label>
+                    <input type="text" id="clientName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                
+                <button type="submit" class="btn">Login</button>
+            </form>
+            
+            <a href="/" class="back-to-home">Back to Home</a>
+        </div>
+    </div>
+
+    <!-- Dashboard Container -->
+    <div class="dashboard" id="dashboardContainer">
+        <!-- Navigation Bar -->
+        <nav class="navbar">
+            <div class="nav-left">
+                <div class="nav-brand">🏥 CKD Federated Learning</div>
+                <div class="nav-menu">
+                    <button class="nav-btn active" onclick="showSection('prediction')">Prediction</button>
+                    <button class="nav-btn" onclick="showSection('training')">Training</button>
+                    <button class="nav-btn" onclick="showSection('dashboard')">Dashboard</button>
+                </div>
+            </div>
+            <div class="nav-right">
+                <div class="notification-container">
+                    <button class="notification-btn" onclick="toggleNotifications()">
+                        🔔 Notifications
+                        <span class="notification-badge" id="notificationBadge">0</span>
+                    </button>
+                    <div class="notification-dropdown" id="notificationDropdown">
+                        <div class="notification-header">
+                            <h3>Notifications</h3>
+                            <button class="mark-all-read-btn" onclick="markAllAsRead()">Mark all as read</button>
+                        </div>
+                        <div class="notification-list" id="notificationList">
+                            <div class="empty-notifications">No notifications</div>
+                        </div>
+                    </div>
+                </div>
+                <span class="user-name" id="userName">Client</span>
+                <button class="btn-logout" onclick="logout()">Logout</button>
+            </div>
+        </nav>
+
+        <!-- Main Container -->
+        <div class="container">
+            <!-- Prediction Section (Default) -->
+            <section id="predictionSection" class="page-section active">
+                <div class="page-header">
+                    <h1 class="page-title">CKD Prediction</h1>
+                    <p class="page-subtitle">Make predictions for chronic kidney disease</p>
+                </div>
+
+                <!-- Prediction Form -->
+                <div class="card">
+                    <div class="card-header">Patient Information</div>
+                    <div id="predictionMessage" class="success-message"></div>
+                    <form id="predictionForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Age</label>
+                                <input type="number" name="age" required min="0" max="120">
+                            </div>
+                            <div class="form-group">
+                                <label>Blood Pressure (bp)</label>
+                                <input type="number" name="bp" required step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>Specific Gravity (sg)</label>
+                                <input type="number" name="sg" required step="0.001">
+                            </div>
+                            <div class="form-group">
+                                <label>Albumin (al)</label>
+                                <input type="number" name="al" required step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>Sugar (su)</label>
+                                <input type="number" name="su" required step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>Blood Glucose Random (bgr)</label>
+                                <input type="number" name="bgr" required step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>Blood Urea (bu)</label>
+                                <input type="number" name="bu" required step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>Serum Creatinine (sc)</label>
+                                <input type="number" name="sc" required step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label>Sodium (sod)</label>
+                                <input type="number" name="sod" required step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>Potassium (pot)</label>
+                                <input type="number" name="pot" required step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label>Hemoglobin (hemo)</label>
+                                <input type="number" name="hemo" required step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label>Packed Cell Volume (pcv)</label>
+                                <input type="number" name="pcv" required step="1">
+                            </div>
+                            <div class="form-group">
+                                <label>White Blood Cell Count (wc)</label>
+                                <input type="number" name="wc" required step="1">
+                            </div>
+                            <div class="form-group">
+                                <label>Red Blood Cell Count (rc)</label>
+                                <input type="number" name="rc" required step="0.01">
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-small">
+                                <span class="btn-icon">🔍 Predict</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Prediction History -->
+                <div class="card">
+                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>Prediction History</span>
+                        <button type="button" class="btn btn-small btn-secondary" onclick="exportPredictions()" style="width: auto; margin: 0;">
+                            <span class="btn-icon">📥 Export CSV</span>
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table id="predictionHistoryTable">
+                            <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>Age</th>
+                                    <th>BP</th>
+                                    <th>SG</th>
+                                    <th>AL</th>
+                                    <th>SU</th>
+                                    <th>BGR</th>
+                                    <th>BU</th>
+                                    <th>SC</th>
+                                    <th>SOD</th>
+                                    <th>POT</th>
+                                    <th>HEMO</th>
+                                    <th>PCV</th>
+                                    <th>WC</th>
+                                    <th>RC</th>
+                                    <th>Prediction</th>
+                                    <th>Confidence</th>
+                                </tr>
+                            </thead>
+                            <tbody id="predictionHistoryBody">
+                                <tr>
+                                    <td colspan="17" class="empty-state">
+                                        <div class="empty-state-icon">📊</div>
+                                        <div>No predictions yet. Make your first prediction above.</div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Training Section -->
+            <section id="trainingSection" class="page-section">
+                <div class="page-header">
+                    <h1 class="page-title">Model Training</h1>
+                    <p class="page-subtitle">Train your local model with differential privacy</p>
+                </div>
+
+                <!-- Dataset Upload -->
+                <div class="card">
+                    <div class="card-header">Dataset Upload</div>
+                    <div id="uploadMessage" class="success-message"></div>
+                    <div class="file-upload" onclick="document.getElementById('datasetFile').click()">
+                        <input type="file" id="datasetFile" accept=".csv" onchange="handleFileSelect(event)">
+                        <div class="file-upload-label">
+                            📁 Click to browse or drag and drop your CSV file
+                        </div>
+                        <div class="file-name" id="fileName"></div>
+                    </div>
+                </div>
+
+                <!-- Training Configuration -->
+                <div class="card">
+                    <div class="card-header">Training Configuration</div>
+                    <div id="trainingMessage" class="success-message"></div>
+                    
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>Epochs</span>
+                            <span class="slider-value" id="epochsValue">10</span>
+                        </div>
+                        <input type="range" id="epochs" min="1" max="50" value="10" oninput="updateSliderValue('epochs')">
+                    </div>
+
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>Batch Size</span>
+                            <span class="slider-value" id="batchSizeValue">32</span>
+                        </div>
+                        <input type="range" id="batchSize" min="8" max="128" step="8" value="32" oninput="updateSliderValue('batchSize')">
+                    </div>
+
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>Learning Rate</span>
+                            <span class="slider-value" id="learningRateValue">0.001</span>
+                        </div>
+                        <input type="range" id="learningRate" min="0.0001" max="0.01" step="0.0001" value="0.001" oninput="updateSliderValue('learningRate')">
+                    </div>
+
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>Noise Multiplier (DP)</span>
+                            <span class="slider-value" id="noiseMultiplierValue">1.0</span>
+                        </div>
+                        <input type="range" id="noiseMultiplier" min="0.1" max="5.0" step="0.1" value="1.0" oninput="updateSliderValue('noiseMultiplier')">
+                    </div>
+
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>Max Gradient Norm</span>
+                            <span class="slider-value" id="maxGradNormValue">1.0</span>
+                        </div>
+                        <input type="range" id="maxGradNorm" min="0.1" max="5.0" step="0.1" value="1.0" oninput="updateSliderValue('maxGradNorm')">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Training Password</label>
+                        <input type="password" id="trainingPassword" placeholder="Enter training password">
+                    </div>
+
+                    <button class="btn" onclick="startTraining()">
+                        <span class="btn-icon">🚀 Start Training</span>
+                    </button>
+
+                    <!-- Progress Bar -->
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill">0%</div>
+                        </div>
+                        <div class="progress-status" id="progressStatus">Initializing...</div>
+                    </div>
+                </div>
+
+                <!-- Training History -->
+                <div class="card">
+                    <div class="card-header">Training History</div>
+                    <div class="table-container">
+                        <table id="trainingHistoryTable">
+                            <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>Round</th>
+                                    <th>Epochs</th>
+                                    <th>Batch Size</th>
+                                    <th>Accuracy</th>
+                                    <th>Loss</th>
+                                    <th>Training Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="trainingHistoryBody">
+                                <tr>
+                                    <td colspan="7" class="empty-state">
+                                        <div class="empty-state-icon">📚</div>
+                                        <div>No training history yet. Start your first training session.</div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dashboard Section -->
+            <section id="dashboardSection" class="page-section">
+                <div class="page-header">
+                    <h1 class="page-title">Client Dashboard</h1>
+                    <p class="page-subtitle">Overview of your federated learning activities</p>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Trainings</div>
+                        <div class="stat-value" id="totalTrainings">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Current Accuracy</div>
+                        <div class="stat-value" id="currentAccuracy">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Records Trained</div>
+                        <div class="stat-value" id="datasetSize">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Predictions</div>
+                        <div class="stat-value" id="totalPredictions">0</div>
+                    </div>
+                </div>
+
+                <!-- Client Information -->
+                <div class="card">
+                    <div class="card-header">Client Information</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Client Name</label>
+                            <input type="text" id="dashClientName" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Last Training</label>
+                            <input type="text" id="lastTraining" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Update Status</label>
+                            <input type="text" id="updateStatus" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Current Loss</label>
+                            <input type="text" id="currentLoss" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="card">
+                    <div class="card-header">Recent Activity</div>
+                    <div id="recentActivity">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📋</div>
+                            <div>No recent activity to display.</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        let authToken = null;
+        let currentUser = null;
+        let predictionHistory = [];
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const clientName = document.getElementById('clientName').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch('/api/client/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        client_name: clientName,
+                        password: password
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    authToken = data.access_token;
+                    currentUser = data;
+                    
+                    document.getElementById('loginContainer').style.display = 'none';
+                    document.getElementById('dashboardContainer').style.display = 'block';
+                    document.getElementById('userName').textContent = data.user_name;
+                    
+                    // Load dashboard data
+                    loadDashboardStats();
+                    loadPredictionHistory();
+                    loadTrainingHistory();
+                    updateNotificationBadge();
+                    
+                    // Poll for new notifications every 30 seconds
+                    setInterval(updateNotificationBadge, 30000);
+                } else {
+                    showError('loginError', data.detail || 'Login failed');
+                }
+            } catch (error) {
+                showError('loginError', 'Connection error. Please try again.');
+            }
+        });
+
+        // Logout
+        function logout() {
+            authToken = null;
+            currentUser = null;
+            document.getElementById('loginContainer').style.display = 'flex';
+            document.getElementById('dashboardContainer').style.display = 'none';
+            document.getElementById('loginForm').reset();
+        }
+
+        // Show Section
+        function showSection(section) {
+            // Update nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Show section
+            document.querySelectorAll('.page-section').forEach(sec => {
+                sec.classList.remove('active');
+            });
+            document.getElementById(section + 'Section').classList.add('active');
+
+            // Load data for section
+            if (section === 'dashboard') {
+                loadDashboardStats();
+                loadRecentActivities();
+            } else if (section === 'training') {
+                loadTrainingHistory();
+            } else if (section === 'prediction') {
+                loadPredictionHistory();
+            }
+        }
+
+        // Notification Functions
+        async function loadNotifications() {
+            try {
+                const response = await fetch('/api/client/notifications', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    const notifications = await response.json();
+                    displayNotifications(notifications);
+                    updateNotificationBadge();
+                }
+            } catch (error) {
+                console.error('Error loading notifications:', error);
+            }
+        }
+
+        async function updateNotificationBadge() {
+            try {
+                const response = await fetch('/api/client/notifications/unread-count', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const badge = document.getElementById('notificationBadge');
+                    if (data.unread_count > 0) {
+                        badge.textContent = data.unread_count;
+                        badge.style.display = 'block';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                }
+            } catch (error) {
+                console.error('Error updating notification badge:', error);
+            }
+        }
+
+        function displayNotifications(notifications) {
+            const listContainer = document.getElementById('notificationList');
+            
+            if (notifications.length === 0) {
+                listContainer.innerHTML = '<div class="empty-notifications">No notifications</div>';
+                return;
+            }
+
+            listContainer.innerHTML = notifications.map(notif => {
+                const date = new Date(notif.created_at);
+                const timeAgo = getTimeAgo(date);
+                const unreadClass = notif.is_read ? '' : 'unread';
+                
+                return `
+                    <div class="notification-item ${unreadClass}" onclick="markNotificationRead(${notif.id})">
+                        <div class="notification-title">${notif.title}</div>
+                        <div class="notification-message">${notif.message}</div>
+                        <div class="notification-time">${timeAgo}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            
+            if (seconds < 60) return 'Just now';
+            if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes ago`;
+            if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
+            if (seconds < 604800) return `${Math.floor(seconds / 86400)} days ago`;
+            
+            return date.toLocaleDateString();
+        }
+
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notificationDropdown');
+            dropdown.classList.toggle('show');
+            
+            if (dropdown.classList.contains('show')) {
+                loadNotifications();
+            }
+        }
+
+        async function markNotificationRead(notificationId) {
+            try {
+                await fetch(`/api/client/notifications/${notificationId}/mark-read`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                loadNotifications();
+                updateNotificationBadge();
+            } catch (error) {
+                console.error('Error marking notification as read:', error);
+            }
+        }
+
+        async function markAllAsRead() {
+            try {
+                await fetch('/api/client/notifications/mark-all-read', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                loadNotifications();
+                updateNotificationBadge();
+            } catch (error) {
+                console.error('Error marking all notifications as read:', error);
+            }
+        }
+
+        // Close notification dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('notificationDropdown');
+            const button = document.querySelector('.notification-btn');
+            
+            if (dropdown && button && !dropdown.contains(event.target) && !button.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        // Update Slider Values
+        function updateSliderValue(sliderId) {
+            const slider = document.getElementById(sliderId);
+            const valueDisplay = document.getElementById(sliderId + 'Value');
+            valueDisplay.textContent = slider.value;
+        }
+
+        // Handle File Select
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                document.getElementById('fileName').textContent = `Selected: ${file.name}`;
+                uploadDataset(file);
+            }
+        }
+
+        // Upload Dataset
+        async function uploadDataset(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('/api/client/upload-dataset', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showMessage('uploadMessage', `Dataset uploaded successfully! ${data.num_samples} samples detected.`, 'success');
+                } else {
+                    showMessage('uploadMessage', data.detail || 'Upload failed', 'error');
+                }
+            } catch (error) {
+                showMessage('uploadMessage', 'Upload failed. Please try again.', 'error');
+            }
+        }
+
+        // Start Training
+        async function startTraining() {
+            const trainingPassword = document.getElementById('trainingPassword').value;
+            
+            if (!trainingPassword) {
+                showMessage('trainingMessage', 'Please enter training password', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('training_password', trainingPassword);
+            formData.append('epochs', document.getElementById('epochs').value);
+            formData.append('batch_size', document.getElementById('batchSize').value);
+            formData.append('learning_rate', document.getElementById('learningRate').value);
+            formData.append('noise_multiplier', document.getElementById('noiseMultiplier').value);
+            formData.append('max_grad_norm', document.getElementById('maxGradNorm').value);
+
+            // Show progress
+            document.getElementById('progressContainer').style.display = 'block';
+            simulateProgress();
+
+            try {
+                const response = await fetch('/api/client/train', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('progressFill').style.width = '100%';
+                    document.getElementById('progressFill').textContent = '100%';
+                    document.getElementById('progressStatus').textContent = 'Training completed successfully!';
+                    
+                    showMessage('trainingMessage', `Training completed! Accuracy: ${(data.metrics?.accuracy * 100).toFixed(2)}%`, 'success');
+                    
+                    setTimeout(() => {
+                        document.getElementById('progressContainer').style.display = 'none';
+                        loadTrainingHistory();
+                    }, 2000);
+                } else {
+                    document.getElementById('progressContainer').style.display = 'none';
+                    showMessage('trainingMessage', data.detail || 'Training failed', 'error');
+                }
+            } catch (error) {
+                document.getElementById('progressContainer').style.display = 'none';
+                showMessage('trainingMessage', 'Training failed. Please try again.', 'error');
+            }
+        }
+
+        // Simulate Progress
+        function simulateProgress() {
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 10;
+                if (progress > 90) progress = 90;
+                
+                document.getElementById('progressFill').style.width = progress + '%';
+                document.getElementById('progressFill').textContent = Math.round(progress) + '%';
+                document.getElementById('progressStatus').textContent = 'Training in progress...';
+            }, 500);
+
+            setTimeout(() => clearInterval(interval), 30000);
+        }
+
+        // Prediction Form
+        document.getElementById('predictionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const patientData = {};
+            
+            for (let [key, value] of formData.entries()) {
+                patientData[key] = value;
+            }
+
+            try {
+                const response = await fetch('/api/client/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        patient_data: patientData
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    const prediction = data.prediction === 'ckd' ? 'CKD Detected' : 'No CKD';
+                    const confidence = (data.confidence * 100).toFixed(2);
+                    
+                    showMessage('predictionMessage', `Prediction: ${prediction} (Confidence: ${confidence}%)`, 'success');
+                    
+                    // Add to history with all fields
+                    predictionHistory.unshift({
+                        timestamp: new Date().toLocaleString(),
+                        age: patientData.age || '-',
+                        bp: patientData.bp || '-',
+                        sg: patientData.sg || '-',
+                        al: patientData.al || '-',
+                        su: patientData.su || '-',
+                        bgr: patientData.bgr || '-',
+                        bu: patientData.bu || '-',
+                        sc: patientData.sc || '-',
+                        sod: patientData.sod || '-',
+                        pot: patientData.pot || '-',
+                        hemo: patientData.hemo || '-',
+                        pcv: patientData.pcv || '-',
+                        wc: patientData.wc || '-',
+                        rc: patientData.rc || '-',
+                        prediction: prediction,
+                        confidence: confidence + '%'
+                    });
+                    
+                    updatePredictionHistoryTable();
+                    e.target.reset();
+                } else {
+                    showMessage('predictionMessage', data.detail || 'Prediction failed', 'error');
+                }
+            } catch (error) {
+                showMessage('predictionMessage', 'Prediction failed. Please try again.', 'error');
+            }
+        });
+
+        // Update Prediction History Table
+        function updatePredictionHistoryTable() {
+            const tbody = document.getElementById('predictionHistoryBody');
+            
+            if (predictionHistory.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="17" class="empty-state">
+                            <div class="empty-state-icon">📊</div>
+                            <div>No predictions yet. Make your first prediction above.</div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = predictionHistory.map(pred => `
+                <tr>
+                    <td>${pred.timestamp}</td>
+                    <td>${pred.age}</td>
+                    <td>${pred.bp}</td>
+                    <td>${pred.sg}</td>
+                    <td>${pred.al}</td>
+                    <td>${pred.su}</td>
+                    <td>${pred.bgr}</td>
+                    <td>${pred.bu}</td>
+                    <td>${pred.sc}</td>
+                    <td>${pred.sod}</td>
+                    <td>${pred.pot}</td>
+                    <td>${pred.hemo}</td>
+                    <td>${pred.pcv}</td>
+                    <td>${pred.wc}</td>
+                    <td>${pred.rc}</td>
+                    <td>
+                        <span class="badge ${pred.prediction.includes('No') ? 'badge-success' : 'badge-danger'}">
+                            ${pred.prediction}
+                        </span>
+                    </td>
+                    <td>${pred.confidence}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Export Predictions
+        function exportPredictions() {
+            if (predictionHistory.length === 0) {
+                alert('No predictions to export');
+                return;
+            }
+
+            const csv = [
+                ['Timestamp', 'Age', 'BP', 'SG', 'AL', 'SU', 'BGR', 'BU', 'SC', 'SOD', 'POT', 'HEMO', 'PCV', 'WC', 'RC', 'Prediction', 'Confidence'],
+                ...predictionHistory.map(p => [
+                    p.timestamp, p.age, p.bp, p.sg, p.al, p.su,
+                    p.bgr, p.bu, p.sc, p.sod, p.pot, p.hemo, p.pcv, p.wc, p.rc,
+                    p.prediction, p.confidence
+                ])
+            ].map(row => row.join(',')).join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `predictions_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Load Dashboard Stats
+        async function loadDashboardStats() {
+            try {
+                const response = await fetch('/api/client/dashboard/stats', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('totalTrainings').textContent = data.total_trainings || 0;
+                    document.getElementById('currentAccuracy').textContent = data.current_accuracy 
+                        ? (data.current_accuracy * 100).toFixed(2) + '%' 
+                        : '-';
+                    document.getElementById('datasetSize').textContent = data.total_records_trained || 0;
+                    document.getElementById('totalPredictions').textContent = data.total_predictions || 0;
+                    
+                    document.getElementById('dashClientName').value = data.client_name || '';
+                    document.getElementById('lastTraining').value = data.last_trained || 'Never';
+                    document.getElementById('updateStatus').value = data.update_status || 'N/A';
+                    document.getElementById('currentLoss').value = data.current_loss 
+                        ? data.current_loss.toFixed(4) 
+                        : '-';
+                }
+            } catch (error) {
+                console.error('Failed to load dashboard stats:', error);
+            }
+        }
+
+        // Load Training History
+        async function loadTrainingHistory() {
+            try {
+                const response = await fetch('/api/client/training-history', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.length > 0) {
+                    const tbody = document.getElementById('trainingHistoryBody');
+                    tbody.innerHTML = data.map(item => `
+                        <tr>
+                            <td>${new Date(item.completed_at).toLocaleString()}</td>
+                            <td>${item.round_number || '-'}</td>
+                            <td>${item.epochs}</td>
+                            <td>${item.batch_size}</td>
+                            <td>
+                                <span class="badge badge-success">
+                                    ${(item.accuracy * 100).toFixed(2)}%
+                                </span>
+                            </td>
+                            <td>${item.loss.toFixed(4)}</td>
+                            <td>${item.training_time ? item.training_time.toFixed(2) + 's' : '-'}</td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Failed to load training history:', error);
+            }
+        }
+
+        // Load Prediction History
+        async function loadPredictionHistory() {
+            try {
+                const response = await fetch('/api/client/prediction-history?limit=50', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.length > 0) {
+                    predictionHistory = data.map(item => ({
+                        timestamp: new Date(item.timestamp).toLocaleString(),
+                        age: item.patient_data.age || '-',
+                        bp: item.patient_data.bp || '-',
+                        sg: item.patient_data.sg || '-',
+                        al: item.patient_data.al || '-',
+                        su: item.patient_data.su || '-',
+                        rbc: item.patient_data.rbc || '-',
+                        pc: item.patient_data.pc || '-',
+                        bgr: item.patient_data.bgr || '-',
+                        bu: item.patient_data.bu || '-',
+                        sc: item.patient_data.sc || '-',
+                        sod: item.patient_data.sod || '-',
+                        pot: item.patient_data.pot || '-',
+                        hemo: item.patient_data.hemo || '-',
+                        htn: item.patient_data.htn || '-',
+                        dm: item.patient_data.dm || '-',
+                        prediction: item.prediction === 'ckd' ? 'CKD Detected' : 'No CKD',
+                        confidence: (item.confidence * 100).toFixed(2) + '%'
+                    }));
+                    updatePredictionHistoryTable();
+                }
+            } catch (error) {
+                console.error('Failed to load prediction history:', error);
+            }
+        }
+
+        // Helper Functions
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.style.display = 'block';
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+
+        function showMessage(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.className = type === 'error' ? 'error-message' : 'success-message';
+            element.textContent = message;
+            element.style.display = 'block';
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+
+        // Load Recent Activities
+        async function loadRecentActivities() {
+            try {
+                const response = await fetch('/api/client/recent-activities?limit=10', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    const activities = await response.json();
+                    displayRecentActivities(activities);
+                }
+            } catch (error) {
+                console.error('Error loading recent activities:', error);
+            }
+        }
+
+        function displayRecentActivities(activities) {
+            const container = document.getElementById('recentActivity');
+            
+            if (activities.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <div>No recent activity to display.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = activities.map(activity => {
+                const date = new Date(activity.timestamp);
+                const timeAgo = getTimeAgo(date);
+                
+                // Determine icon based on action
+                let icon = '📝';
+                if (activity.action === 'login') icon = '🔐';
+                else if (activity.action === 'train_model') icon = '🎯';
+                else if (activity.action === 'predict') icon = '🔮';
+                else if (activity.action === 'predict_batch') icon = '📊';
+                else if (activity.action === 'upload_dataset') icon = '📤';
+                
+                return `
+                    <div style="padding: 0.75rem; border-bottom: 1px solid #f1f5f9; display: flex; gap: 0.75rem; align-items: start;">
+                        <div style="font-size: 1.5rem;">${icon}</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; color: #0f172a; margin-bottom: 0.25rem;">
+                                ${formatActionName(activity.action)}
+                            </div>
+                            <div style="color: #64748b; font-size: 0.875rem; margin-bottom: 0.25rem;">
+                                ${activity.details}
+                            </div>
+                            <div style="color: #94a3b8; font-size: 0.75rem;">
+                                ${timeAgo}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function formatActionName(action) {
+            const actionNames = {
+                'login': 'Logged In',
+                'train_model': 'Model Training',
+                'predict': 'Single Prediction',
+                'predict_batch': 'Batch Prediction',
+                'upload_dataset': 'Dataset Upload'
+            };
+            return actionNames[action] || action.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
+    </script>
+</body>
+</html>
