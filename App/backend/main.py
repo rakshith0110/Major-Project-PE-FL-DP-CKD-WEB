@@ -8,8 +8,8 @@ from fastapi.responses import HTMLResponse, FileResponse
 from pathlib import Path
 import uvicorn
 
-from App.backend.api import admin_routes, client_routes
-from App.backend.core.database import init_database
+from backend.api import admin_routes, client_routes
+from backend.core.database import init_database
 
 # Initialize database
 init_database()
@@ -216,7 +216,7 @@ async def api_info():
 
 if __name__ == "__main__":
     uvicorn.run(
-        "App.backend.main:app",
+        "backend.main:app",
         host="0.0.0.0",
         port=8000,
         reload=True
