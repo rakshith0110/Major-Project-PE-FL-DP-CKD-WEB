@@ -9,18 +9,18 @@ import json
 from pathlib import Path
 from datetime import datetime
 
-from backend.models.schemas import (
+from App.backend.models.schemas import (
     ClientLogin, Token, TrainingRequest, TrainingResponse,
     PredictionRequest, PredictionResponse, BatchPredictionResponse,
     ClientDashboardStats, FileUploadResponse, TrainingConfig
 )
-from backend.core.auth import (
+from App.backend.core.auth import (
     authenticate_client, create_access_token, require_client,
     verify_training_password, log_audit
 )
-from backend.core.database import get_db_connection
-from backend.services.fl_service import FederatedLearningService
-from backend.services.email_service import email_service
+from App.backend.core.database import get_db_connection
+from App.backend.services.fl_service import FederatedLearningService
+from App.backend.services.email_service import email_service
 
 router = APIRouter(prefix="/api/client", tags=["Client"])
 fl_service = FederatedLearningService()

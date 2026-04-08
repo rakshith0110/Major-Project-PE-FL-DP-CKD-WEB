@@ -6,18 +6,18 @@ from typing import List, Optional
 from datetime import datetime
 import json
 
-from backend.models.schemas import (
+from App.backend.models.schemas import (
     AdminLogin, Token, ClientCreate, ClientResponse, ClientUpdate,
     AggregationRequest, AggregationResponse, AggregationCandidate, AdminDashboardStats,
     GlobalMetrics, ClientMetrics, AdminPasswordConfirm
 )
-from backend.core.auth import (
+from App.backend.core.auth import (
     authenticate_admin, create_access_token, require_admin,
     get_current_user, log_audit, hash_password
 )
-from backend.core.database import get_db_connection
-from backend.services.fl_service import FederatedLearningService
-from backend.services.email_service import email_service
+from App.backend.core.database import get_db_connection
+from App.backend.services.fl_service import FederatedLearningService
+from App.backend.services.email_service import email_service
 
 router = APIRouter(prefix="/api/admin", tags=["Admin"])
 fl_service = FederatedLearningService()

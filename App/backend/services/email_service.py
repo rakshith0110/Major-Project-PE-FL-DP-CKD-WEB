@@ -6,7 +6,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 from typing import Optional
-from backend.core.database import get_db_connection
+from App.backend.core.database import get_db_connection
 
 # Email configuration (update with actual SMTP settings)
 SMTP_SERVER = "smtp.gmail.com"

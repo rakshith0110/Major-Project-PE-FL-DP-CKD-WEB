@@ -21,7 +21,7 @@ from data_prep import preprocess_split_single, preprocess_client_with_template
 from dp import clip_gradients, add_gaussian_noise
 from eval_utils import metrics_from_logits
 
-from backend.core.database import get_db_connection
+from App.backend.core.database import get_db_connection
 
 class FederatedLearningService:
     """Service for managing federated learning operations"""
