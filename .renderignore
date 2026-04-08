@@ -1,0 +1,46 @@
+# Render ignore file - files/directories to exclude from deployment
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local development
+*.log
+*.sqlite
+*.db-journal
+
+# Large datasets (upload via Render disk instead)
+Datasets/
+FL-DP-Healthcare/client*/dataset/*.csv
+FL-DP-Healthcare/data/*.csv
+
+# Jupyter notebooks
+*.ipynb
+.ipynb_checkpoints/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Documentation (optional - include if you want docs deployed)
+# *.md

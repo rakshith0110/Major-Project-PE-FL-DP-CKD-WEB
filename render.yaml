@@ -1,0 +1,21 @@
+# Render Blueprint for Federated Learning CKD System
+services:
+  - type: web
+    name: federated-learning-ckd
+    env: python
+    region: oregon
+    plan: starter
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: cd App && python -m uvicorn App.backend.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: PORT
+        value: 8000
+    disk:
+      name: federated-data
+      mountPath: /opt/render/project/src/App
+      sizeGB: 10
+
+# Made with Bob

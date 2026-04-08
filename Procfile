@@ -1,0 +1,1 @@
+web: cd App && python -m uvicorn App.backend.main:app --host 0.0.0.0 --port $PORT
