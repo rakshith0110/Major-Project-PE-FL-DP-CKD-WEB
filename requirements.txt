@@ -200,4 +200,4 @@ pydantic[email]==2.5.0
 python-dotenv==1.0.0
 
 # Deep Learning - torchvision (from App/requirements.txt)
-torchvision==0.16.1
+torchvision==0.18.1  # Updated to match torch 2.3.1
