@@ -1,7 +1,7 @@
 ﻿# Core dependencies
 absl-py==2.3.1
 amqp==5.3.1
-anyio==4.10.0
+anyio==3.7.1  # Downgraded for FastAPI compatibility
 argon2-cffi==25.1.0
 argon2-cffi-bindings==25.1.0
 arrow==1.3.0
@@ -106,7 +106,8 @@ parso==0.8.5
 perfect==0.0.1
 pillow==11.3.0
 platformdirs==4.4.0
-#playsound==1.3.0  # Removed - not needed for web deployment
+#playsound==1.3.0
+  # Removed - not needed for web deployment
 prometheus_client==0.22.1
 prompt_toolkit==3.0.52
 protobuf==6.32.1
@@ -114,14 +115,17 @@ psutil==7.1.0
 pure_eval==0.2.3
 pycparser==2.23
 pyfiglet==1.0.4
-#pygame==2.6.1  # Removed - not needed for web deployment
+#pygame==2.6.1
+  # Removed - not needed for web deployment
 Pygments==2.19.2
 pyparsing==3.2.4
 python-dateutil==2.9.0.post0
 python-json-logger==3.3.0
 pytz==2025.2
-#pywin32==311  # Removed - not needed for web deployment
-#pywinpty==3.0.0  # Removed - not needed for web deployment
+#pywin32==311
+  # Removed - not needed for web deployment
+#pywinpty==3.0.0
+  # Removed - not needed for web deployment
 PyYAML==6.0.2
 pyzmq==27.1.0
 referencing==0.36.2
@@ -174,7 +178,7 @@ wrapt==1.17.3
 xgboost==3.0.5
 
 # FastAPI and server (from App/requirements.txt)
-fastapi==0.104.1
+fastapi==0.115.0  # Updated for anyio 4.x compatibility
 uvicorn[standard]==0.24.0
 python-multipart==0.0.6
 
