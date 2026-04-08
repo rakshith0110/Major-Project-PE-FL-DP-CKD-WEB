@@ -6,7 +6,7 @@ from typing import Optional, Dict
 from jose import JWTError, jwt
 from fastapi import HTTPException, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from App.backend.core.database import get_db_connection, hash_password
+from backend.core.database import get_db_connection, hash_password
 
 # JWT Configuration
 SECRET_KEY = "your-secret-key-change-in-production-2024-federated-learning-ckd"

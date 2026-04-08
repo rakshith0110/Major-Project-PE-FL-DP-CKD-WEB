@@ -8,8 +8,8 @@ from fastapi.responses import HTMLResponse, FileResponse
 from pathlib import Path
 import uvicorn
 
-from App.backend.api import admin_routes, client_routes
-from App.backend.core.database import init_database
+from backend.api import admin_routes, client_routes
+from backend.core.database import init_database
 
 # Initialize database
 init_database()
