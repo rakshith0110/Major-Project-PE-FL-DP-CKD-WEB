@@ -1,0 +1,104 @@
+================================================================================
+FEDERATED LEARNING CKD PROJECT - DUMMY HOSPITAL CLIENTS
+================================================================================
+
+1. KMC Hospital Mangalore
+   Username: kmc_mangalore
+   Email: admin@kmcmangalore.com
+   Password 1: kmc123
+   Password 2: kmc456
+   Description: Leading multi-specialty hospital in Mangalore with advanced 
+                nephrology department
+
+--------------------------------------------------------------------------------
+
+2. Apollo Hospital Chennai
+   Username: apollo_chennai
+   Email: federated@apollochennai.com
+   Password 1: apollo123
+   Password 2: apollo456
+   Description: Premier healthcare institution in Chennai specializing in 
+                kidney disease treatment
+
+--------------------------------------------------------------------------------
+
+3. AIIMS Delhi
+   Username: aiims_delhi
+   Email: research@aiimsdelhi.edu.in
+   Password 1: aiims123
+   Password 2: aiims456
+   Description: All India Institute of Medical Sciences - Top government 
+                medical research hospital
+
+--------------------------------------------------------------------------------
+
+4. Fortis Hospital Bangalore
+   Username: fortis_bangalore
+   Email: data@fortisbangalore.com
+   Password 1: fortis123
+   Password 2: fortis456
+   Description: Multi-specialty hospital with state-of-the-art dialysis and 
+                transplant facilities
+
+--------------------------------------------------------------------------------
+
+5. Manipal Hospital Manipal
+   Username: manipal_hospital
+   Email: ml.research@manipalhospital.com
+   Password 1: manipal123
+   Password 2: manipal456
+   Description: University hospital with extensive nephrology research and 
+                patient care
+
+--------------------------------------------------------------------------------
+
+6. Max Hospital Delhi
+   Username: max_delhi
+   Email: fedlearn@maxhospital.com
+   Password 1: max123
+   Password 2: max456
+   Description: Premium healthcare provider with advanced kidney care center
+
+--------------------------------------------------------------------------------
+
+7. Narayana Health Bangalore
+   Username: narayana_blr
+   Email: ckd.data@narayanahealth.org
+   Password 1: narayana123
+   Password 2: narayana456
+   Description: Affordable healthcare network with large nephrology patient 
+                database
+
+--------------------------------------------------------------------------------
+
+8. Medanta Hospital Gurgaon
+   Username: medanta_gurgaon
+   Email: research@medanta.org
+   Password 1: medanta123
+   Password 2: medanta456
+   Description: Multi-super specialty hospital with dedicated kidney institute
+
+--------------------------------------------------------------------------------
+
+9. Lilavati Hospital Mumbai
+   Username: lilavati_mumbai
+   Email: ml.dept@lilavatihospital.com
+   Password 1: lilavati123
+   Password 2: lilavati456
+   Description: Tertiary care hospital with comprehensive renal care services
+
+--------------------------------------------------------------------------------
+
+10. Christian Medical College Vellore
+    Username: cmc_vellore
+    Email: federated@cmcvellore.ac.in
+    Password 1: cmc123
+    Password 2: cmc456
+    Description: Renowned medical college hospital with extensive CKD research 
+                 programs
+
+================================================================================
+NOTE: These are dummy credentials for testing purposes only.
+All clients are configured for federated learning participation with secure 
+authentication and data privacy compliance.
+================================================================================
