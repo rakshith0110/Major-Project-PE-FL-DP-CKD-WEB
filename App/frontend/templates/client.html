@@ -861,9 +861,14 @@
                 <div class="card">
                     <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
                         <span>Prediction History</span>
-                        <button type="button" class="btn btn-small btn-secondary" onclick="exportPredictions()" style="width: auto; margin: 0;">
-                            <span class="btn-icon">📥 Export CSV</span>
-                        </button>
+                        <div style="display: flex; gap: 10px;">
+                            <button type="button" class="btn btn-small btn-secondary" onclick="exportPredictions()" style="width: auto; margin: 0;">
+                                <span class="btn-icon">📥 Export CSV</span>
+                            </button>
+                            <button type="button" class="btn btn-small" onclick="showDeleteHistoryModal()" style="width: auto; margin: 0; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+                                <span class="btn-icon">🗑️ Delete History</span>
+                            </button>
+                        </div>
                     </div>
                     <div class="table-container">
                         <table id="predictionHistoryTable">
@@ -884,13 +889,14 @@
                                     <th>PCV</th>
                                     <th>WC</th>
                                     <th>RC</th>
+                                    <th>Class</th>
                                     <th>Prediction</th>
                                     <th>Confidence</th>
                                 </tr>
                             </thead>
                             <tbody id="predictionHistoryBody">
                                 <tr>
-                                    <td colspan="17" class="empty-state">
+                                    <td colspan="18" class="empty-state">
                                         <div class="empty-state-icon">📊</div>
                                         <div>No predictions yet. Make your first prediction above.</div>
                                     </td>
@@ -1074,6 +1080,23 @@
                     </div>
                 </div>
             </section>
+        </div>
+    </div>
+
+    <!-- Delete History Modal -->
+    <div id="deleteHistoryModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 2rem; border-radius: 12px; max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+            <h2 style="margin: 0 0 1rem 0; color: #dc2626; font-size: 1.5rem;">⚠️ Delete Prediction History</h2>
+            <p style="margin-bottom: 1.5rem; color: #64748b;">This action cannot be undone. All your prediction records will be permanently deleted.</p>
+            <div class="form-group">
+                <label>Enter your password to confirm:</label>
+                <input type="password" id="deleteHistoryPassword" placeholder="Your password" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 0.95rem;">
+            </div>
+            <div id="deleteHistoryMessage" style="margin-top: 1rem;"></div>
+            <div style="display: flex; gap: 10px; margin-top: 1.5rem;">
+                <button onclick="hideDeleteHistoryModal()" class="btn btn-secondary" style="flex: 1;">Cancel</button>
+                <button onclick="confirmDeleteHistory()" class="btn" style="flex: 1; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">Delete All</button>
+            </div>
         </div>
     </div>
 
@@ -1405,8 +1428,11 @@
             const formData = new FormData(e.target);
             const patientData = {};
             
+            // Convert numeric fields to numbers
             for (let [key, value] of formData.entries()) {
-                patientData[key] = value;
+                // Try to convert to number, keep as string if it fails
+                const numValue = parseFloat(value);
+                patientData[key] = isNaN(numValue) ? value : numValue;
             }
 
             try {
@@ -1446,6 +1472,7 @@
                         pcv: patientData.pcv || '-',
                         wc: patientData.wc || '-',
                         rc: patientData.rc || '-',
+                        class: prediction === 'CKD Detected' ? '1' : '0',
                         prediction: prediction,
                         confidence: confidence + '%'
                     });
@@ -1467,7 +1494,7 @@
             if (predictionHistory.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="17" class="empty-state">
+                        <td colspan="18" class="empty-state">
                             <div class="empty-state-icon">📊</div>
                             <div>No predictions yet. Make your first prediction above.</div>
                         </td>
@@ -1493,6 +1520,7 @@
                     <td>${pred.pcv}</td>
                     <td>${pred.wc}</td>
                     <td>${pred.rc}</td>
+                    <td>${pred.class || '-'}</td>
                     <td>
                         <span class="badge ${pred.prediction.includes('No') ? 'badge-success' : 'badge-danger'}">
                             ${pred.prediction}
@@ -1510,14 +1538,29 @@
                 return;
             }
 
-            const csv = [
-                ['Timestamp', 'Age', 'BP', 'SG', 'AL', 'SU', 'BGR', 'BU', 'SC', 'SOD', 'POT', 'HEMO', 'PCV', 'WC', 'RC', 'Prediction', 'Confidence'],
-                ...predictionHistory.map(p => [
-                    p.timestamp, p.age, p.bp, p.sg, p.al, p.su,
-                    p.bgr, p.bu, p.sc, p.sod, p.pot, p.hemo, p.pcv, p.wc, p.rc,
-                    p.prediction, p.confidence
-                ])
-            ].map(row => row.join(',')).join('\n');
+            // Helper function to escape CSV values
+            function escapeCSV(value) {
+                if (value === null || value === undefined) return '';
+                const str = String(value);
+                // If value contains comma, quote, or newline, wrap in quotes and escape quotes
+                if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+                    return '"' + str.replace(/"/g, '""') + '"';
+                }
+                return str;
+            }
+
+            // CSV with medical data first (Age to Class), then metadata (Timestamp, Prediction, Confidence)
+            const headers = ['age', 'bp', 'sg', 'al', 'su', 'bgr', 'bu', 'sc', 'sod', 'pot', 'hemo', 'pcv', 'wc', 'rc', 'class', 'timestamp', 'prediction', 'confidence'];
+            const headerLabels = ['Age', 'BP', 'SG', 'AL', 'SU', 'BGR', 'BU', 'SC', 'SOD', 'POT', 'HEMO', 'PCV', 'WC', 'RC', 'Class', 'Timestamp', 'Prediction', 'Confidence'];
+            
+            const csvRows = [
+                headerLabels.join(','),
+                ...predictionHistory.map(p =>
+                    headers.map(h => escapeCSV(p[h] || '-')).join(',')
+                )
+            ];
+
+            const csv = csvRows.join('\n');
 
             const blob = new Blob([csv], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
@@ -1526,6 +1569,65 @@
             a.download = `predictions_${new Date().toISOString().split('T')[0]}.csv`;
             a.click();
             window.URL.revokeObjectURL(url);
+        }
+
+        // Delete History Modal Functions
+        function showDeleteHistoryModal() {
+            if (predictionHistory.length === 0) {
+                alert('No prediction history to delete');
+                return;
+            }
+            document.getElementById('deleteHistoryModal').style.display = 'flex';
+            document.getElementById('deleteHistoryPassword').value = '';
+            document.getElementById('deleteHistoryMessage').innerHTML = '';
+        }
+
+        function hideDeleteHistoryModal() {
+            document.getElementById('deleteHistoryModal').style.display = 'none';
+            document.getElementById('deleteHistoryPassword').value = '';
+            document.getElementById('deleteHistoryMessage').innerHTML = '';
+        }
+
+        async function confirmDeleteHistory() {
+            const password = document.getElementById('deleteHistoryPassword').value;
+            const messageDiv = document.getElementById('deleteHistoryMessage');
+            
+            if (!password) {
+                messageDiv.innerHTML = '<div class="error-message" style="display: block;">Please enter your password</div>';
+                return;
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append('password', password);
+
+                const response = await fetch('/api/client/delete-prediction-history', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    messageDiv.innerHTML = '<div class="success-message" style="display: block;">✓ ' + data.message + '</div>';
+                    
+                    // Clear local prediction history
+                    predictionHistory = [];
+                    updatePredictionHistoryTable();
+                    
+                    // Close modal after 2 seconds
+                    setTimeout(() => {
+                        hideDeleteHistoryModal();
+                    }, 2000);
+                } else {
+                    messageDiv.innerHTML = '<div class="error-message" style="display: block;">✗ ' + (data.detail || 'Failed to delete history') + '</div>';
+                }
+            } catch (error) {
+                messageDiv.innerHTML = '<div class="error-message" style="display: block;">✗ Failed to delete history. Please try again.</div>';
+            }
         }
 
         // Load Dashboard Stats
@@ -1612,16 +1714,16 @@
                         sg: item.patient_data.sg || '-',
                         al: item.patient_data.al || '-',
                         su: item.patient_data.su || '-',
-                        rbc: item.patient_data.rbc || '-',
-                        pc: item.patient_data.pc || '-',
                         bgr: item.patient_data.bgr || '-',
                         bu: item.patient_data.bu || '-',
                         sc: item.patient_data.sc || '-',
                         sod: item.patient_data.sod || '-',
                         pot: item.patient_data.pot || '-',
                         hemo: item.patient_data.hemo || '-',
-                        htn: item.patient_data.htn || '-',
-                        dm: item.patient_data.dm || '-',
+                        pcv: item.patient_data.pcv || '-',
+                        wc: item.patient_data.wc || '-',
+                        rc: item.patient_data.rc || '-',
+                        class: item.patient_data.class || '-',
                         prediction: item.prediction === 'ckd' ? 'CKD Detected' : 'No CKD',
                         confidence: (item.confidence * 100).toFixed(2) + '%'
                     }));

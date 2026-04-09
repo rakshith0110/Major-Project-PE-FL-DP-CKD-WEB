@@ -600,4 +600,54 @@ async def get_recent_activities(
     conn.close()
     return activities
 
+@router.post("/delete-prediction-history")
+async def delete_prediction_history(
+    password: str = Form(...),
+    current_user: dict = Depends(require_client)
+):
+    """Delete all prediction history for the client with password verification"""
+    from backend.core.database import hash_password
+    
+    client_id = current_user["user_id"]
+    
+    # Verify password
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    password_hash = hash_password(password)
+    cursor.execute("""
+        SELECT id FROM clients
+        WHERE id = ? AND login_password_hash = ?
+    """, (client_id, password_hash))
+    
+    client = cursor.fetchone()
+    
+    if not client:
+        conn.close()
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid password"
+        )
+    
+    # Delete all predictions for this client
+    cursor.execute("DELETE FROM predictions WHERE client_id = ?", (client_id,))
+    deleted_count = cursor.rowcount
+    
+    conn.commit()
+    conn.close()
+    
+    log_audit(
+        "client",
+        client_id,
+        "delete_prediction_history",
+        f"Deleted {deleted_count} prediction records",
+        None
+    )
+    
+    return {
+        "status": "success",
+        "message": f"Successfully deleted {deleted_count} prediction records",
+        "deleted_count": deleted_count
+    }
+
 # Made with Bob

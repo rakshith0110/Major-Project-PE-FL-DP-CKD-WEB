@@ -8,6 +8,7 @@ import torch.nn as nn
 import json
 import time
 import numpy as np
+import pandas as pd
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
@@ -602,22 +603,96 @@ class FederatedLearningService:
                     "message": "No model available for prediction"
                 }
             
+            # Load scaler
+            scaler_path = self.models_dir / "scaler.pkl"
+            if not scaler_path.exists():
+                return {
+                    "status": "error",
+                    "message": "Scaler not found. Please initialize the global model first."
+                }
+            
+            import pickle
+            with open(scaler_path, 'rb') as f:
+                scaler = pickle.load(f)
+            
+            # Load template CSV to get feature columns and preprocessing
+            resolved_template_csv = self.resolve_dataset_path(template_csv)
+            template_df = pd.read_csv(str(resolved_template_csv))
+            
+            # Drop ID columns and get feature columns (excluding target)
+            for col in list(template_df.columns):
+                if "id" in col.lower():
+                    template_df = template_df.drop(columns=[col])
+            
+            if "class" in template_df.columns:
+                feature_cols = [c for c in template_df.columns if c != "class"]
+            else:
+                feature_cols = list(template_df.columns)
+            
+            # Create DataFrame from patient data
+            patient_df = pd.DataFrame([patient_data])
+            
+            # Ensure all required features are present
+            missing_features = [f for f in feature_cols if f not in patient_df.columns]
+            if missing_features:
+                return {
+                    "status": "error",
+                    "message": f"Missing required features: {missing_features}"
+                }
+            
+            # Convert all columns to numeric, handling any string inputs
+            for c in feature_cols:
+                try:
+                    # Try to convert to numeric, coercing errors to NaN
+                    patient_df[c] = pd.to_numeric(patient_df[c], errors='coerce')
+                except Exception:
+                    pass
+            
+            # Apply preprocessing: imputation and z-score capping
+            for c in feature_cols:
+                # Check if value is missing or NaN
+                if pd.isna(patient_df[c].iloc[0]):
+                    # Fill with mean from template
+                    patient_df.loc[0, c] = template_df[c].mean()
+            
+            # Z-score capping (using template statistics)
+            z_threshold = 4.0
+            for c in feature_cols:
+                try:
+                    mu = template_df[c].mean()
+                    sd = template_df[c].std(ddof=0) or 1.0
+                    val = float(patient_df[c].iloc[0])
+                    z_score = (val - mu) / sd
+                    
+                    if z_score > z_threshold:
+                        patient_df.loc[0, c] = mu + z_threshold * sd
+                    elif z_score < -z_threshold:
+                        patient_df.loc[0, c] = mu - z_threshold * sd
+                except (ValueError, TypeError) as e:
+                    # If conversion fails, use template mean
+                    patient_df.loc[0, c] = template_df[c].mean()
+            
+            # Extract features in correct order and convert to float
+            X = patient_df[feature_cols].values.astype(float)
+            
+            # Apply scaling
+            X_scaled = scaler.transform(X)
+            
             # Load model using saved input dimension
             input_dim = self.get_model_input_dim(predict_model_path)
             model = build_model(input_dim)
             model = self.load_model(model, str(predict_model_path))
             model.eval()
             
-            # Prepare patient data (simplified - needs proper preprocessing with scaler)
-            features = list(patient_data.values())
-            X = torch.FloatTensor([features])
+            # Convert to tensor
+            X_tensor = torch.FloatTensor(X_scaled)
             
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             model = model.to(device)
-            X = X.to(device)
+            X_tensor = X_tensor.to(device)
             
             with torch.no_grad():
-                logit = model(X).squeeze().item()
+                logit = model(X_tensor).squeeze().item()
                 prob = 1 / (1 + np.exp(-logit))
                 prediction = "CKD" if prob > 0.5 else "No CKD"
             
@@ -625,7 +700,7 @@ class FederatedLearningService:
             conn = get_db_connection()
             cursor = conn.cursor()
             cursor.execute("""
-                INSERT INTO predictions 
+                INSERT INTO predictions
                 (client_id, patient_data_json, prediction_result, confidence)
                 VALUES (?, ?, ?, ?)
             """, (
